@@ -13,10 +13,17 @@ DESTINATIONS = ['CFU','HER','RHO','BDS','NAP','PMO','FAO','ALC','IBZ','AGP','SPC
 COLUMNS=['origin','destination','departtime','arrivaltime','duration','price','faresLeft']
 
 
-with open('/data/ryanairScrapeData.csv', 'w', newline='') as file: 
-    writer = csv.writer(file)
-    writer.writerow(COLUMNS)              
+def init_csv():
+    with open('data/ryanairScrapeData.csv', 'w', newline='') as file: 
+        writer = csv.writer(file)
+        writer.writerow(COLUMNS)  
 
+def data_to_csv(data):
+    with open('data/ryanairScrapeData.csv', 'a', newline='') as file: 
+        writer = csv.writer(file)
+        writer.writerow(data)            
+
+def get_data():
     #loop over dates between 2023-04-01 AND 2023-10-31
     for single_date in pd.date_range('2023-04-01','2023-10-31'):
         date =single_date.strftime("%Y-%m-%d")
@@ -40,9 +47,13 @@ with open('/data/ryanairScrapeData.csv', 'w', newline='') as file:
                     departtime = flights[0]['segments'][0]['time'][0]
                     arrivaltime = flights[0]['segments'][0]['time'][1]
                     duration = flights[0]['segments'][0]['duration']
-                    count = flights[0]['regularFare']['fares'][0]['count']
+                    #count = flights[0]['regularFare']['fares'][0]['count']
                     #print(origin, departtime, destination, arrivaltime ,faresleft, amount, duration,count)
-                    writer = csv.writer(file)
-                    writer.writerow([origin,destination,departtime,arrivaltime,duration,amount,faresleft])              
+                    data_to_csv([origin,destination,departtime,arrivaltime,duration,amount,faresleft])
 
-        #{'faresLeft': 4, 'flightKey': 'FR~2923~ ~~BRU~03/26/2023 09:55~AGP~03/26/2023 12:50~~', 'infantsLeft': 13, 'regularFare': {'fareKey': 'BRS4IK66UVTAORXBUNPKZCBVNFJYSREAYHVKE6XH7SWRQ3UHROY377UTMYV3WY6IFIPAJXYQT7YHMKEV2ZTJJ3TKRFXWVZYVNOXBTOGLXPPF43MUK4DLPJLGSC52HCXXRZCPXBK4VBGW44FI55ATHRXATHQTGWURCGIFOJAVZEHJEHUS2SNUHI67CRCWV5ANY43HCEDA2MWDWMR2B7D4ZI3NCC43CYXELDWUZLQ', 'fareClass': 'C', 'fares': [{'type': 'ADT', 'amount': 90.73, 'count': 1, 'hasDiscount': False, 'publishedFare': 90.73, 'discountInPercent': 0, 'hasPromoDiscount': False, 'discountAmount': 0.0, 'hasBogof': False}]}, 'operatedBy': '', 'segments': [{'segmentNr': 0, 'origin': 'BRU', 'destination': 'AGP', 'flightNumber': 'FR 2923', 'time': ['2023-03-26T09:55:00.000', '2023-03-26T12:50:00.000'], 'timeUTC': ['2023-03-26T07:55:00.000Z', '2023-03-26T10:50:00.000Z'], 'duration': '02:55'}], 'flightNumber': 'FR 2923', 'time': ['2023-03-26T09:55:00.000', '2023-03-26T12:50:00.000'], 'timeUTC': ['2023-03-26T07:55:00.000Z', '2023-03-26T10:50:00.000Z'], 'duration': '02:55'}
+def start():
+    init_csv()
+    get_data()
+
+start()
+# raw data {'faresLeft': 4, 'flightKey': 'FR~2923~ ~~BRU~03/26/2023 09:55~AGP~03/26/2023 12:50~~', 'infantsLeft': 13, 'regularFare': {'fareKey': 'BRS4IK66UVTAORXBUNPKZCBVNFJYSREAYHVKE6XH7SWRQ3UHROY377UTMYV3WY6IFIPAJXYQT7YHMKEV2ZTJJ3TKRFXWVZYVNOXBTOGLXPPF43MUK4DLPJLGSC52HCXXRZCPXBK4VBGW44FI55ATHRXATHQTGWURCGIFOJAVZEHJEHUS2SNUHI67CRCWV5ANY43HCEDA2MWDWMR2B7D4ZI3NCC43CYXELDWUZLQ', 'fareClass': 'C', 'fares': [{'type': 'ADT', 'amount': 90.73, 'count': 1, 'hasDiscount': False, 'publishedFare': 90.73, 'discountInPercent': 0, 'hasPromoDiscount': False, 'discountAmount': 0.0, 'hasBogof': False}]}, 'operatedBy': '', 'segments': [{'segmentNr': 0, 'origin': 'BRU', 'destination': 'AGP', 'flightNumber': 'FR 2923', 'time': ['2023-03-26T09:55:00.000', '2023-03-26T12:50:00.000'], 'timeUTC': ['2023-03-26T07:55:00.000Z', '2023-03-26T10:50:00.000Z'], 'duration': '02:55'}], 'flightNumber': 'FR 2923', 'time': ['2023-03-26T09:55:00.000', '2023-03-26T12:50:00.000'], 'timeUTC': ['2023-03-26T07:55:00.000Z', '2023-03-26T10:50:00.000Z'], 'duration': '02:55'}
