@@ -126,6 +126,7 @@ def scrapeOpDatum():
 for j in DESTINATION_ARRAY:
     driver_init(j)
     while str(driver.find_element(By.CSS_SELECTOR, ".container.selected .date").get_attribute('innerHTML')) != "zon 01.10.23":
+        # for i in range(10):
         scrapeOpDatum()
         time.sleep(5)
         veranderDatum()
@@ -200,3 +201,5 @@ with open('data/bruAirScrapeData.csv', 'w', newline='') as file:
     writer.writerow(HEADERS)
     for i in range(len(totaalData)):
         writer.writerows(totaalData[i])
+
+driver.close()

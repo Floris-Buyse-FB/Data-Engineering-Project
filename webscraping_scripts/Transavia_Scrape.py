@@ -1,44 +1,87 @@
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-import re
+from selenium.webdriver.chrome.service import Service
 import time
-import csv
-from csv import DictReader
+import random
 
-DESTINATION_ARRAY = ["kerkyra", "heraklion", "rhodes", "brindisi", "napels", "palermo", "faro", "alicante", "ibiza",
-                     "malaga", "palma-de-mallorca", "tenerife"]
+PATH = "C:\Program Files (x86)\Google\Chrome\Application\chromedriver.exe"
 
-HEADERS = ["datum", "vertrek-aankomst", "stop_0", "stop_1", "stop_2",
-           "aantal_tussenstops", "vluchtduur", "prijs", "stoelen_beschikbaar"]
+# Driver
+options = webdriver.ChromeOptions()
+options.add_experimental_option("detach", True)
+options.add_argument('--ignore-certificate-errors')
+options.add_argument('--ignore-ssl-errors')
+options.add_extension(
+    r"C:\Users\buyse\AppData\Local\Google\Chrome\User Data\Default\Extensions\mpbjkejclgfgadiemmefgebjfooflfhl\2.0.1_0.crx")
+driver_service = Service(executable_path=PATH)
+driver = webdriver.Chrome(service=driver_service, options=options)
+driver.maximize_window()
+driver.implicitly_wait(25)
+
+url = "https://www.transavia.com/nl-BE/boek-een-vlucht/vluchten/zoeken/"
+
+driver.get(url)
 
 
-def init_csv():
-    with open('data/transaviaScrapeData.csv', 'w', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow(HEADERS)
+def delay(waiting_time=5):
+    driver.implicitly_wait(waiting_time)
 
 
-### CAPTCHA CODE EERST HIERONDER
-#aanmaken webdriver + ophale website
-driver = webdriver.Chrome()
-driver.get('https://www.google.com/recaptcha/api2/demo')
+def solve_captcha():
+    time.sleep(5)
+    delay()
+    # main iframe zoeken
+    main_iframe = driver.find_element(By.ID, "main-iframe")
+    driver.switch_to.frame(main_iframe)
 
-#acces cookies
-def get_cookies_values(file):
-    with open(file, encoding='utf-8-sig') as f:
-        dict_reader = DictReader(f)
-        list_of_dicts = list(dict_reader)
-    return list_of_dicts
+    # eerste div container in iframe zoeken
+    delay()
+    time.sleep(5)
+    container = driver.find_element(
+        By.CSS_SELECTOR, ".form_container .g-recaptcha")
 
-#store cookies van transavia webpagina
-cookies = get_cookies_values("test_cookies.csv")
+    # captcha iframe zoeken in container
+    delay()
+    time.sleep(5)
+    captcha_iframe = container.find_element(By.TAG_NAME, "iframe")
 
-#pass cookies into browser
-for i in cookies:
-    driver.add_cookie(i)
+    # switch naar captcha iframe
+    driver.switch_to.frame(captcha_iframe)
+    delay()
+    time.sleep(5)
+    # captcha checkbox aanklikken
+    driver.find_element(By.CLASS_NAME, "recaptcha-checkbox").click()
 
-#refresh browser
-driver.refresh()
+    # switch terug naar main iframe
+    driver.switch_to.default_content()
+    main_iframe = driver.find_element(By.TAG_NAME, "iframe")
+    driver.switch_to.frame(main_iframe)
+    delay()
+    time.sleep(5)
+
+    # wanneer captcha aangeklikt is, switchen naar de captcha iframe
+    divs = driver.find_elements(By.TAG_NAME, "div")
+    captcha_iframe_div = divs[-1]
+    iframe = captcha_iframe_div.find_element(By.CSS_SELECTOR, ":nth-child(1)")
+    driver.switch_to.frame(iframe)
+    delay()
+    time.sleep(5)
+
+    # find solve button
+    try:
+        time.sleep(5)
+        container = driver.find_element(By.ID, "rc-imageselect")
+        controls = container.find_element(By.CLASS_NAME, "rc-controls")
+        primary = controls.find_element(By.CLASS_NAME, "primary-controls")
+        rc_buttons = primary.find_element(By.CLASS_NAME, "rc-buttons")
+        time.sleep(5)
+        help_button_holder = rc_buttons.find_element(
+            By.CLASS_NAME, "help-button-holder")
+
+        time.sleep(5)
+        help_button_holder.click()
+    except:
+        print("No solve button found")
+
+
+solve_captcha()
