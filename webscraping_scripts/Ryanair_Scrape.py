@@ -11,16 +11,16 @@ from datetime import date
 
 ORIGINS = ['BRU','CRL']
 DESTINATIONS = ['CFU','HER','RHO','BDS','NAP','PMO','FAO','ALC','IBZ','AGP','SPC','TFS']
-COLUMNS=['origin','destination','departtime','arrivaltime','duration','price','faresLeft']
+COLUMNS=['flightNumber','departureAirportCode','departureAirportName','arrivalAirportCode','arrivalAirportName','departureDate','arrivalDate','carrierCode','duration_formatted','price','hasDiscount','fareType','availableSeats','flightKey']
 
-
-
+#write the column of the cvs file
 def init_csv(date):
     url = f'data/ryanair/ryanairScrapeData_{date}.csv'
     with open(url, 'w', newline='') as file: 
         writer = csv.writer(file)
         writer.writerow(COLUMNS)  
 
+#append a row of data to the csv file
 def data_to_csv(data,date):
     url = f'data/ryanair/ryanairScrapeData_{date}.csv'
     with open(url, 'a', newline='') as file: 
@@ -32,7 +32,9 @@ def get_data(datecsv):
     for single_date in pd.date_range('2023-04-01','2023-10-31'):
         date =single_date.strftime("%Y-%m-%d")
 
+        #loop over all departure airports
         for departureAirportCode in ORIGINS:
+            #loop over all arrival airports
             for arrivalAirportCode in DESTINATIONS:
 
                 URL = f"https://www.ryanair.com/api/booking/v4/nl-nl/availability?ADT=1&CHD=0&DateOut={date}&Destination={arrivalAirportCode}&Disc=0&INF=0&Origin={departureAirportCode}&TEEN=0&promoCode=&RoundTrip=false&ToUs=AGREED"
@@ -46,7 +48,10 @@ def get_data(datecsv):
                 departureAirportName = json_object["trips"][0]["originName"]
                 arrivalAirportName = json_object["trips"][0]["destinationName"]
 
+                #select flights from json object that was received
                 flights = json_object["trips"][0]["dates"][0]["flights"]
+
+                #if the object contains flight data then we select all wanted info
                 if flights:
                     flightNumber = flights[0]["flightNumber"]
                     departureDate = flights[0]['segments'][0]['time'][0]
@@ -58,6 +63,8 @@ def get_data(datecsv):
                     availableSeats = flights[0]['faresLeft']
                     fareType = flights[0]['regularFare']['fares'][0]["type"]
                     flightKey = flights[0]["flightKey"]
+
+                    #put the scraped data in csv file
                     data_to_csv([flightNumber,departureAirportCode,departureAirportName,arrivalAirportCode,arrivalAirportName,
                     departureDate,arrivalDate,carrierCode,duration_formatted,price,hasDiscount,fareType,availableSeats,flightKey],datecsv)
 

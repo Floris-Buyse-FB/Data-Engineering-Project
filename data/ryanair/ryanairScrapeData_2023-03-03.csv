@@ -1,4 +1,4 @@
-origin,destination,departtime,arrivaltime,duration,price,faresLeft
+flightNumber,departureAirportCode,departureAirportName,arrivalAirportCode,arrivalAirportName,departureDate,arrivalDate,carrierCode,duration_formatted,price,hasDiscount,fareType,availableSeats,flightKey
 FR 7986,CRL,Brussels (Charleroi),HER,Heraklion Crete,2023-04-01T08:10:00.000,2023-04-01T12:35:00.000,,03:25,205.75,False,ADT,-1,FR~7986~ ~~CRL~04/01/2023 08:10~HER~04/01/2023 12:35~~
 FR 1302,CRL,Brussels (Charleroi),NAP,Naples,2023-04-01T07:45:00.000,2023-04-01T10:00:00.000,,02:15,141.29,True,ADT,-1,FR~1302~ ~~CRL~04/01/2023 07:45~NAP~04/01/2023 10:00~~
 FR 6269,CRL,Brussels (Charleroi),PMO,Palermo,2023-04-01T21:30:00.000,2023-04-01T23:59:00.000,Malta Air,02:29,115.99,False,ADT,-1,FR~6269~ ~~CRL~04/01/2023 21:30~PMO~04/01/2023 23:59~~
