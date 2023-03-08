@@ -11,7 +11,7 @@ from datetime import date
 
 ORIGINS = ['BRU','CRL']
 DESTINATIONS = ['CFU','HER','RHO','BDS','NAP','PMO','FAO','ALC','IBZ','AGP','SPC','TFS']
-COLUMNS=['flightNumber','departureAirportCode','departureAirportName','arrivalAirportCode','arrivalAirportName','departureDate','arrivalDate','carrierCode','duration_formatted','price','hasDiscount','fareType','availableSeats','flightKey']
+COLUMNS=['flightNumber','departureAirportCode','departureAirportName','arrivalAirportCode','arrivalAirportName','departureDate','arrivalDate','carrierCode','duration_formatted','price','originalPrice','hasDiscount','hasPromoDiscount','discountAmount','fareType','availableSeats','flightKey']
 
 #write the column of the cvs file
 def init_csv(date):
@@ -59,14 +59,17 @@ def get_data(datecsv):
                     carrierCode = flights[0]["operatedBy"]
                     duration_formatted = flights[0]['segments'][0]['duration']
                     price = flights[0]['regularFare']['fares'][0]['amount']
+                    originalPrice = flights[0]['regularFare']['fares'][0]['publishedFare']
                     hasDiscount = flights[0]['regularFare']['fares'][0]["hasDiscount"]
+                    hasPromoDiscount = flights[0]['regularFare']['fares'][0]["hasPromoDiscount"]
+                    discountAmount = flights[0]['regularFare']['fares'][0]["discountAmount"]
                     availableSeats = flights[0]['faresLeft']
                     fareType = flights[0]['regularFare']['fares'][0]["type"]
                     flightKey = flights[0]["flightKey"]
 
                     #put the scraped data in csv file
                     data_to_csv([flightNumber,departureAirportCode,departureAirportName,arrivalAirportCode,arrivalAirportName,
-                    departureDate,arrivalDate,carrierCode,duration_formatted,price,hasDiscount,fareType,availableSeats,flightKey],datecsv)
+                    departureDate,arrivalDate,carrierCode,duration_formatted,price,originalPrice,hasDiscount,hasPromoDiscount,discountAmount,fareType,availableSeats,flightKey],datecsv)
 
 def start():
     today = date.today()
