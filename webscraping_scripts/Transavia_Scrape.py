@@ -132,8 +132,9 @@ def navigate_excessive_search():
    
     for element in DESTINATIONS_ARRAY:
         #bestemming kiezen
-        bestemming= driver.find_element(By.ID, "countryStationSelection_Destination-input")
-        bestemming.clear()
+        parent = driver.find_element(By.CSS_SELECTOR, ".HV-gs-type-e--bp0 .HV-gc .HV-gs-type-e--bp0:nth-of-type(2)")
+        parent2 = parent.find_element(By.CSS_SELECTOR, '.textfield')
+        bestemming = parent2.find_element(By.ID, "countryStationSelection_Destination-input")
         time.sleep(5)
         bestemming.send_keys(element)
         time.sleep(2)
@@ -168,15 +169,15 @@ def navigate_excessive_search():
             time.sleep(5)
 
 
-
+       
             #idee was om per bestemming url van vluchten te krijgen > die afgaan elke url volgen > via beautifoulsoup ding proberen p elementen om te zetten in json object
             #alle info is te vinden in die url (beetje gebaseerd op ryanair)
-            #zit dus vast tho
-            elements = [driver.find_elements(By.CSS_SELECTOR, 'p.text-align-right--bp25 > a')]
-            print(elements)
-            for element in elements:
-                urls_per_bestemming += [element.__getattribute__('href')]
-            print(urls_per_bestemming)
+            #zit dus vast tho"
+            #elements = [driver.find_elements(By.CSS_SELECTOR, 'p.text-align-right--bp25 > a')]
+            #print(elements)
+            #for element in elements:
+             #   urls_per_bestemming += [element.__getattribute__('href')]
+            #print(urls_per_bestemming)
           
             #print([my_elem.get_attribute("href") for my_elem in driver.find_elements(By.XPATH, '//*[@id="top"]/div/div/div[2]/div/div[2]/div/div/section/ol/li/div/div/section/ol/li[2]/div[3]/div/ol/li/div/div[1]/div/div[2]/div/div[2]/p/a')])
 
