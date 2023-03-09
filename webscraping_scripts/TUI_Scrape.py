@@ -1,5 +1,5 @@
 from selenium import webdriver
-from datetime import date
+from datetime import date, datetime
 from selenium.webdriver.chrome.service import Service 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -8,7 +8,7 @@ from selenium.webdriver.support import expected_conditions as EC
 import json, re, csv, pandas as pd
 
 def init_csv(today):
-    COLUMNS=["flightNumber", "departureAirportCode", "departureAirportName", "departureCountryCode", "departureDate", "departureTime", "arrivalAirportCode", "arrivalAirportName", "arrivalCountryCode", "arrivalDate", "arrivalTime", "adultPrice", "originalAdultPrice", "journeyType", "journeyDuration", "totalNumberOfStops", "carrierCode", "carrierName", "availableSeats", "isCheapest", "airportTax", "originalAirportTax", "bookingFee", "originalBookingFee", "isOriginalBooking"]
+    COLUMNS=["flightNumber", "productId", "departureAirportCode", "departureAirportName", "departureCountryCode", "departureDate", "departureTime", "arrivalAirportCode", "arrivalAirportName", "arrivalCountryCode", "arrivalDate", "arrivalTime", "adultPrice", "originalAdultPrice", "journeyType", "journeyDuration", "totalNumberOfStops", "carrierCode", "carrierName", "availableSeats", "isCheapest", "airportTax", "originalAirportTax", "bookingFee", "originalBookingFee", "isOriginalBooking"]
     url = f'data/tuifly/tuiFlyScrapeData_{today}.csv'
     with open(url, 'w', newline='') as file: 
         writer = csv.writer(file)
@@ -44,77 +44,77 @@ def get_raw_data(url):
             json_data = match.group(1)
             return json.loads(json_data)
 
-def get_useful_data(raw_data, date, today):
-    if len(raw_data["flightViewData"]) > 0:
-        departureCountryCode = raw_data["depAirportData"][0]["countryCode"]
-        arrivalCountryCode = raw_data["arrAirportData"][0]["countryCode"]
-        for flight in raw_data["flightViewData"]:
-            if flight["departureDate"] == date:
-                flightNumber = flight['flightsectors'][0]['flightNumber']
-                departureAirportCode = flight["journeySummary"]["departAirportCode"]
-                departureAirportName = flight["flightsectors"][0]["departureAirport"]["name"]
-                departureDate = flight["departureDate"]
-                departureTime = flight["flightsectors"][0]["schedule"]["depTime"]
-                arrivalAirportCode = flight["journeySummary"]["arrivalAirportCode"]
-                arrivalAirportName = flight["flightsectors"][0]["arrivalAirport"]["name"]
-                arrivalDate = flight['journeySummary']["arrivalDate"]
-                arrivalTime = flight["flightsectors"][0]["schedule"]["arrTime"]
-                adultPrice = flight["adultPrice"]
-                originalAdultPrice = flight["originalAdultPrice"]
-                journeyType = flight["journeySummary"]["journeyType"]
-                journeyDuration = flight["journeySummary"]["journeyDuration"]
-                hours, minutes = int(journeyDuration.split("u ")[0]), int(journeyDuration.split("u ")[1].replace("m", ""))
-                journeyDuration = f"{hours:02}:{minutes:02}"
-                totalNumberOfStops = flight["journeySummary"]["totalNumberOfStops"]
-                carrierCode = flight["journeySummary"]["carrierCode"]
-                carrierName = flight["journeySummary"]["carrierName"]
-                availableSeats = flight["journeySummary"]["availableSeats"]
-                isCheapest = flight["isCheapest"]
-                airportTax = flight["airportTax"]
-                originalAirportTax = flight["originalAirportTax"]
-                bookingFee = flight["bookingFee"]
-                originalBookingFee = flight["originalBookingFee"]
-                isOriginalBooking = flight["isOriginalBooking"]
-                data_to_csv([
-                    flightNumber,
-                    departureAirportCode,
-                    departureAirportName,
-                    departureCountryCode,
-                    departureDate,
-                    departureTime,
-                    arrivalAirportCode,
-                    arrivalAirportName,
-                    arrivalCountryCode,
-                    arrivalDate,
-                    arrivalTime,
-                    adultPrice,
-                    originalAdultPrice,
-                    journeyType,
-                    journeyDuration,
-                    totalNumberOfStops,
-                    carrierCode,
-                    carrierName,
-                    availableSeats,
-                    isCheapest,
-                    airportTax,
-                    originalAirportTax,
-                    bookingFee,
-                    originalBookingFee,
-                    isOriginalBooking
-                    ], today)
-
+def get_useful_data(raw_data, today):
+    for flight in raw_data["flightViewData"]:
+        date_parts = flight["departureDate"].split('-')
+        if date(2023, 4, 1) <= date(2023, int(date_parts[1]), int(date_parts[2])) and date(2023, int(date_parts[1]), int(date_parts[2])) <= date(2023, 10, 1):
+            departureCountryCode = raw_data["depAirportData"][0]["countryCode"]
+            arrivalCountryCode = raw_data["arrAirportData"][0]["countryCode"]
+            flightNumber = flight['flightsectors'][0]['flightNumber']
+            productId = flight['productId']
+            departureAirportCode = flight["journeySummary"]["departAirportCode"]
+            departureAirportName = flight["flightsectors"][0]["departureAirport"]["name"]
+            departureDate = flight["departureDate"]
+            departureTime = flight["flightsectors"][0]["schedule"]["depTime"]
+            arrivalAirportCode = flight["journeySummary"]["arrivalAirportCode"]
+            arrivalAirportName = flight["flightsectors"][0]["arrivalAirport"]["name"]
+            arrivalDate = flight['journeySummary']["arrivalDate"]
+            arrivalTime = flight["flightsectors"][0]["schedule"]["arrTime"]
+            adultPrice = flight["adultPrice"]
+            originalAdultPrice = flight["originalAdultPrice"]
+            journeyType = flight["journeySummary"]["journeyType"]
+            journeyDuration = flight["journeySummary"]["journeyDuration"]
+            hours, minutes = int(journeyDuration.split("u ")[0]), int(journeyDuration.split("u ")[1].replace("m", ""))
+            journeyDuration = f"{hours:02}:{minutes:02}"
+            totalNumberOfStops = flight["journeySummary"]["totalNumberOfStops"]
+            carrierCode = flight["journeySummary"]["carrierCode"]
+            carrierName = flight["journeySummary"]["carrierName"]
+            availableSeats = flight["journeySummary"]["availableSeats"]
+            isCheapest = flight["isCheapest"]
+            airportTax = flight["airportTax"]
+            originalAirportTax = flight["originalAirportTax"]
+            bookingFee = flight["bookingFee"]
+            originalBookingFee = flight["originalBookingFee"]
+            isOriginalBooking = flight["isOriginalBooking"]
+            data_to_csv([
+                flightNumber,
+                productId,
+                departureAirportCode,
+                departureAirportName,
+                departureCountryCode,
+                departureDate,
+                departureTime,
+                arrivalAirportCode,
+                arrivalAirportName,
+                arrivalCountryCode,
+                arrivalDate,
+                arrivalTime,
+                adultPrice,
+                originalAdultPrice,
+                journeyType,
+                journeyDuration,
+                totalNumberOfStops,
+                carrierCode,
+                carrierName,
+                availableSeats,
+                isCheapest,
+                airportTax,
+                originalAirportTax,
+                bookingFee,
+                originalBookingFee,
+                isOriginalBooking
+                ], today)
+            
 def start():
     today = date.today()
     today = today.strftime("%Y-%m-%d")
     init_csv(today)
-    ORIGIN = ['BRU', 'OST', 'ANR', 'LGG']
     DESTINATION = ['CFU','HER','RHO','BDS','NAP','PMO','FAO','ALC','IBZ','AGP','SPC','TFS']
-    for depDate in pd.date_range('2023-04-01','2023-10-31'):
-        for origin in ORIGIN:
-            for destination in DESTINATION:
-                url = f'http://www.tuifly.be/flight/nl/search?flyingFrom%5B%5D={origin}&flyingTo%5B%5D={destination}&depDate={depDate.strftime("%Y-%m-%d")}&adults=1&children=0&childAge=&choiceSearch=true&searchType=pricegrid&nearByAirports=false&currency=EUR&isOneWay=true'
-                raw_data = get_raw_data(url)
-                if raw_data:
-                    get_useful_data(raw_data, depDate.strftime("%Y-%m-%d"), today)
+    for depDate in pd.date_range(start='2023-04-01', end='2023-10-1', freq='7D'):
+        for destination in DESTINATION:
+            url = f'http://www.tuifly.be/flight/nl/search?flyingFrom%5B%5D=BRU&flyingTo%5B%5D={destination}&depDate={depDate.strftime("%Y-%m-%d")}&adults=1&children=0&childAge=&choiceSearch=true&searchType=pricegrid&nearByAirports=true&currency=EUR&isOneWay=true'
+            raw_data = get_raw_data(url)
+            if raw_data:
+                get_useful_data(raw_data, today)
 
 start()

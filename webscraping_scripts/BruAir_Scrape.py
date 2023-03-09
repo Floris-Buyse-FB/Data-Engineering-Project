@@ -4,6 +4,7 @@ from selenium.webdriver.common.by import By
 import re
 import time
 import csv
+from datetime import date
 
 PATH = "C:\Program Files (x86)\Google\Chrome\Application\chromedriver.exe"
 
@@ -16,6 +17,10 @@ HEADERS = ["datum", "vertrek-aankomst", "stop_0", "stop_1", "stop_2",
 # alle prijzen array
 prijzen = []
 totaalData = []
+
+# dag van vandaag
+today = date.today()
+today = today.strftime("%Y-%m-%d")
 
 # Driver
 options = webdriver.ChromeOptions()
@@ -196,7 +201,8 @@ for j in range(len(totaalData)):
 # DATA IN CSV
 
 # create new csv file with data
-with open('data/bruAirScrapeData.csv', 'w', newline='') as file:
+path_to_csv = f'data/bruair/bruAirScrapeData-{today}.csv' 
+with open(path_to_csv, 'w', newline='') as file:
     writer = csv.writer(file)
     writer.writerow(HEADERS)
     for i in range(len(totaalData)):
