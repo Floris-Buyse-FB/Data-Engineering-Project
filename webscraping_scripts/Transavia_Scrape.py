@@ -1,6 +1,8 @@
 from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.support.ui import Select
 from selenium.webdriver import ActionChains
 import time
 import random
@@ -13,13 +15,15 @@ options.add_experimental_option("detach", True)
 options.add_argument('--ignore-certificate-errors')
 options.add_argument('--ignore-ssl-errors')
 options.add_extension(
-    r"C:\Users\buyse\AppData\Local\Google\Chrome\User Data\Default\Extensions\mpbjkejclgfgadiemmefgebjfooflfhl\2.0.1_0.crx")
+    r"C:\Users\emmad\AppData\Local\Google\Chrome\User Data\Default\Extensions\mpbjkejclgfgadiemmefgebjfooflfhl\2.0.1_0.crx")
 driver_service = Service(executable_path=PATH)
 driver = webdriver.Chrome(service=driver_service, options=options)
+action = ActionChains(driver)
 driver.maximize_window()
 driver.implicitly_wait(25)
 
 url = "https://www.transavia.com/nl-BE/boek-een-vlucht/vluchten/zoeken/"
+
 
 driver.get("https://www.gmail.com")
 time.sleep(5)
@@ -37,6 +41,8 @@ def acces_main_i_frame():
     driver.switch_to.frame(main_iframe)
 
 
+
+# CAPTCHA OPLOSSEN
 def check_captcha():
     # main iframe zoeken
     acces_main_i_frame()
@@ -107,3 +113,75 @@ def solve_captcha():
 
 
 solve_captcha()
+
+
+
+# DATA SCRAPEN
+#navigeren naar home page
+
+DESTINATIONS_ARRAY = ["Heraklion", "Rhodos", "Brindisi", "Napels", "Palermo", "Faro", "Alicante", "Ibiza",
+                     "Malaga", "Palma-de-mallorca", "Tenerife"]
+
+MONTH_ARRAY= ['april 2023', 'mei 2023', 'juni 2023', 'juli 2023', 'augustus 2023', 'september 2023', 'oktober 2023']
+
+def navigate_excessive_search():
+    driver.get(url="https://www.transavia.com/nl-BE/home/")
+    link= driver.find_element(By.PARTIAL_LINK_TEXT, "Uitgebreid")
+    link.click()
+    
+   
+    for element in DESTINATIONS_ARRAY:
+        #bestemming kiezen
+        bestemming= driver.find_element(By.ID, "countryStationSelection_Destination-input")
+        bestemming.clear()
+        time.sleep(5)
+        bestemming.send_keys(element)
+        time.sleep(2)
+        bestemming.send_keys(Keys.ARROW_DOWN)
+        bestemming.send_keys(Keys.ENTER)
+        time.sleep(2)
+        #button=driver.find_element(By.XPATH, '//*[@id="alternativesearch"]/div[2]/div[2]/div/div[2]/div/button')
+        #button.click()
+
+        #enkele vlucht aanduiden
+        driver.find_element(By.XPATH, '//*[@id="alternativesearch"]/div[4]/div[1]/div[2]/h3').click()
+        time.sleep(5)
+        enkele = driver.find_element(By.NAME, 'timeFrameSelection.FlightType')
+        time.sleep(2)
+        enkele.click()
+        time.sleep(2)
+        enkele.send_keys(Keys.ARROW_DOWN)
+        enkele.send_keys(Keys.ENTER)
+
+        #url_array
+        urls_per_bestemming = []
+
+        #maand aanduiden
+        for maand in MONTH_ARRAY:
+            time.sleep(5)
+            month = Select(driver.find_element(By.ID, "timeFrameSelection_SingleFlight_SpecificMonth"))
+            month.select_by_visible_text(maand)
+            time.sleep(5)
+            driver.find_element(By.XPATH, '//*[@id="alternativesearch"]/div[6]/div[2]/button').click()
+            time.sleep(5)
+            driver.find_element(By.XPATH, '//*[@id="HER"]/button[1]').click()
+            time.sleep(5)
+
+
+
+            #idee was om per bestemming url van vluchten te krijgen > die afgaan elke url volgen > via beautifoulsoup ding proberen p elementen om te zetten in json object
+            #alle info is te vinden in die url (beetje gebaseerd op ryanair)
+            #zit dus vast tho
+            elements = [driver.find_elements(By.CSS_SELECTOR, 'p.text-align-right--bp25 > a')]
+            print(elements)
+            for element in elements:
+                urls_per_bestemming += [element.__getattribute__('href')]
+            print(urls_per_bestemming)
+          
+            #print([my_elem.get_attribute("href") for my_elem in driver.find_elements(By.XPATH, '//*[@id="top"]/div/div/div[2]/div/div[2]/div/div/section/ol/li/div/div/section/ol/li[2]/div[3]/div/ol/li/div/div[1]/div/div[2]/div/div[2]/p/a')])
+
+        #for link in urls_per_bestemming:
+
+
+
+navigate_excessive_search()
