@@ -47,7 +47,7 @@ def get_raw_data(url):
 def get_useful_data(raw_data, today):
     for flight in raw_data["flightViewData"]:
         date_parts = flight["departureDate"].split('-')
-        if date(2023, 4, 1) <= date(2023, int(date_parts[1]), int(date_parts[2])) and date(2023, int(date_parts[1]), int(date_parts[2])) <= date(2023, 10, 1):
+        if flight["departAirportCode"] in("LGG", "OST", "ANR") and date(2023, 4, 1) <= date(2023, int(date_parts[1]), int(date_parts[2])) and date(2023, int(date_parts[1]), int(date_parts[2])) <= date(2023, 10, 1):
             departureCountryCode = raw_data["depAirportData"][0]["countryCode"]
             arrivalCountryCode = raw_data["arrAirportData"][0]["countryCode"]
             flightNumber = flight['flightsectors'][0]['flightNumber']
