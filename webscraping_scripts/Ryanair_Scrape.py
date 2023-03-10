@@ -29,7 +29,7 @@ def data_to_csv(data,date):
 
 def get_data(datecsv):
     #loop over dates between 2023-04-01 AND 2023-10-01
-    for single_date in pd.date_range('2023-04-01','2023-10-01'):
+    for single_date in pd.date_range('2023-04-01','2023-10-31'):
         date =single_date.strftime("%Y-%m-%d")
 
         #loop over all departure airports
