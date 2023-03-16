@@ -10,13 +10,15 @@ from selenium_stealth import stealth
 import gzip
 import io
 import datetime
+import json
 
 PATH = "C:\Program Files (x86)\Google\Chrome\Application\chromedriver.exe"
 
 DESTINATION_ARRAY = ["kerkyra", "heraklion", "rhodes", "brindisi", "napels", "palermo", "faro", "alicante", "ibiza",
                      "malaga", "palma-de-mallorca", "tenerife"]
 
-HEADERS = ['scrapeDate','departureAirportCode','departureAirportName','departureCountryCode','arrivalAirportCode','arrivalAirportName','arrivalCountryCode','duration','aantalTussenstops','availableSeats','flightNumber','carrierCode','carrierName','departureDate','totalPrice','taxIncludedInPrice']
+HEADERS = ['scrapeDate', 'departureAirportCode', 'departureAirportName', 'departureCountryCode', 'arrivalAirportCode', 'arrivalAirportName', 'arrivalCountryCode',
+           'duration', 'aantalTussenstops', 'availableSeats', 'flightNumber', 'carrierCode', 'carrierName', 'departureDate', 'totalPrice', 'taxIncludedInPrice']
 
 # Instantiate a UserAgent object
 user_agent = UserAgent()
@@ -89,62 +91,61 @@ def driver_init(datecsv, dest):
             body = i.response.body
             body_str = gzip.GzipFile(
                 fileobj=io.BytesIO(body)).read().decode('utf-8')
-            
-            data = body_str["data"]["airboundsGroup"]
-            dictLocatie = body_str["dictionaries"]["location"]
-            dictAirline = body_str["dictionaries"]["airline"]
-
-
+            body_dict = json.loads(body_str)
+            data = body_dict["data"]["airBoundGroups"]
+            dictLocatie = body_dict["dictionaries"]["location"]
+            dictAirline = body_dict["dictionaries"]["airline"]
+            print(data)
             for vlucht in data:
                 departureAirportCode = vlucht["boundDetails"]["originLocationCode"]
                 departureAirportName = dictLocatie[departureAirportCode]["airportName"]
-                departureCountryCode = dictLocatie[departureAirportCode]["countryCode"]           
+                departureCountryCode = dictLocatie[departureAirportCode]["countryCode"]
 
                 arrivalAirportCode = vlucht["boundDetails"]["destinationLocationCode"]
                 arrivalAirportName = dictLocatie[arrivalAirportCode]["airportName"]
                 arrivalCountryCode = dictLocatie[arrivalAirportCode]["countryCode"]
 
                 hours = vlucht["boundDetails"]["duration"] // 3600
-                minutes = (vlucht["boundDetails"]["duration"]%3600) // 60
+                minutes = (vlucht["boundDetails"]["duration"] % 3600) // 60
                 duration = f"{hours:02d}:{minutes:02d}"
-                aantalTussenstops = len(vlucht["boundDetails"]["segments"]) -1
+                aantalTussenstops = len(vlucht["boundDetails"]["segments"]) - 1
                 availableSeats = vlucht["airBounds"][0]["availabilityDetails"][0]["quota"]
-                flightId = vlucht["segments"][0]["flightId"]
+                flightId = vlucht["boundDetails"]["segments"][0]["flightId"]
                 flightNumber = flightId.split("-")[1]
                 carrierCode = flightNumber[:2]
                 carrierName = dictAirline[carrierCode]
-                departureDate  = datetime.strptime(flightId[-15:], '%Y-%m-%dT%H%M')
-                totalPrice = vlucht["prices"]["totalPrices"][0]["total"] / 100
-                taxIncludedInPrice = vlucht["prices"]["totalPrices"][0]["totalTaxes"] / 100
+                departureDate = datetime.datetime.strptime(
+                    flightId[-15:], "%Y-%m-%d-%H%M").strftime("%Y-%m-%dT%H:%M:%S")
+                totalPrice = vlucht["airBounds"][0]["prices"]["totalPrices"][0]["total"] / 100
+                taxIncludedInPrice = vlucht["airBounds"][0]["prices"]["totalPrices"][0]["totalTaxes"] / 100
 
-                if carrierCode == 'SN':
-                    data_to_csv([datecsv,departureAirportCode,departureAirportName,departureCountryCode,arrivalAirportCode,arrivalAirportName,arrivalCountryCode,duration,aantalTussenstops,availableSeats,flightNumber,carrierCode,carrierName,departureDate,totalPrice,taxIncludedInPrice],datecsv)
+                # if carrierCode == 'SN':
+                data_to_csv([datecsv, departureAirportCode, departureAirportName, departureCountryCode, arrivalAirportCode, arrivalAirportName, arrivalCountryCode,
+                             duration, aantalTussenstops, availableSeats, flightNumber, carrierCode, carrierName, departureDate, totalPrice, taxIncludedInPrice], datecsv)
 
 
 def init_csv(date):
     url = f'data/bruair/BruAirScrapeData_{date}.csv'
-    with open(url, 'w', newline='') as file: 
+    with open(url, 'w', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(HEADERS)  
+        writer.writerow(HEADERS)
 
-#append a row of data to the csv file
-def data_to_csv(data,date):
-    url = f'data/bruair/BruAirScrapeData_{date}.csv'
-    with open(url, 'a', newline='') as file: 
+# append a row of data to the csv file
+
+
+def data_to_csv(data, date):
+    url = f'./data/bruair/BruAirScrapeData_{date}.csv'
+    with open(url, 'a', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(data) 
-
+        writer.writerow(data)
 
 
 def start():
     today = date.today()
     init_csv(today)
-    for i in DESTINATION_ARRAY:
-        driver_init(today,i)
+    driver_init(today, DESTINATION_ARRAY[1])
+
+
 start()
 
 # driver_init(DESTINATION_ARRAY[9])
-
-
-
-
