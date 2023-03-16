@@ -18,7 +18,7 @@ DESTINATION_ARRAY = ["kerkyra", "heraklion", "rhodes", "brindisi", "napels", "pa
                      "malaga", "palma-de-mallorca", "tenerife"]
 
 HEADERS = ['scrapeDate', 'departureAirportCode', 'departureAirportName', 'departureCountryCode', 'arrivalAirportCode', 'arrivalAirportName', 'arrivalCountryCode',
-           'duration', 'aantalTussenstops', 'availableSeats', 'flightNumber', 'carrierCode', 'carrierName', 'departureDate', 'totalPrice', 'taxIncludedInPrice']
+           'duration', 'aantalTussenstops', 'availableSeats', 'flightNumber', 'carrierCode', 'carrierName', 'departureDate','departureTime','arrivalDate','arrivalTime', 'totalPrice', 'taxIncludedInPrice']
 
 # Instantiate a UserAgent object
 user_agent = UserAgent()
@@ -92,11 +92,15 @@ def driver_init(datecsv, dest):
             body_str = gzip.GzipFile(
                 fileobj=io.BytesIO(body)).read().decode('utf-8')
             body_dict = json.loads(body_str)
+            print(body_dict)
+
             data = body_dict["data"]["airBoundGroups"]
             dictLocatie = body_dict["dictionaries"]["location"]
             dictAirline = body_dict["dictionaries"]["airline"]
-            print(data)
+            dictFlight = body_dict["dictionaries"]["flight"]
+            
             for vlucht in data:
+                print(vlucht)
                 departureAirportCode = vlucht["boundDetails"]["originLocationCode"]
                 departureAirportName = dictLocatie[departureAirportCode]["airportName"]
                 departureCountryCode = dictLocatie[departureAirportCode]["countryCode"]
@@ -110,18 +114,30 @@ def driver_init(datecsv, dest):
                 duration = f"{hours:02d}:{minutes:02d}"
                 aantalTussenstops = len(vlucht["boundDetails"]["segments"]) - 1
                 availableSeats = vlucht["airBounds"][0]["availabilityDetails"][0]["quota"]
-                flightId = vlucht["boundDetails"]["segments"][0]["flightId"]
-                flightNumber = flightId.split("-")[1]
-                carrierCode = flightNumber[:2]
-                carrierName = dictAirline[carrierCode]
-                departureDate = datetime.datetime.strptime(
-                    flightId[-15:], "%Y-%m-%d-%H%M").strftime("%Y-%m-%dT%H:%M:%S")
+                departureFlightId = vlucht["boundDetails"]["segments"][0]["flightId"]
+                print(departureFlightId)
+                print(dictFlight[departureFlightId])
+                   
+                carrierCode = dictFlight[departureFlightId]["operatingAirlineCode"]
+                flightNumber = carrierCode + dictFlight[departureFlightId]["marketingFlightNumber"]
+                departureDate,departureTime = dictFlight[departureFlightId]["departure"]["dateTime"].split("T")
+                           
+                arrivalflightId = vlucht["boundDetails"]["segments"][-1]["flightId"]
+                arrivalDate, arrivalTime = dictFlight[arrivalflightId]["arrival"]["dateTime"].split("T")
+
+
+                if carrierCode == 'CITYJET FOR BRUSSELS AIRLINES':
+                    carrierName = 'CITYJET FOR BRUSSELS AIRLINES'
+                else:
+                    carrierName = dictAirline[carrierCode]    
+                # departureDate = datetime.datetime.strptime(
+                #     flightId[-15:], "%Y-%m-%d-%H%M").strftime("%Y-%m-%dT%H:%M:%S")
                 totalPrice = vlucht["airBounds"][0]["prices"]["totalPrices"][0]["total"] / 100
                 taxIncludedInPrice = vlucht["airBounds"][0]["prices"]["totalPrices"][0]["totalTaxes"] / 100
 
-                # if carrierCode == 'SN':
+                #if carrierCode == 'SN' or carrierCode == 'CITYJET FOR BRUSSELS AIRLINES':
                 data_to_csv([datecsv, departureAirportCode, departureAirportName, departureCountryCode, arrivalAirportCode, arrivalAirportName, arrivalCountryCode,
-                             duration, aantalTussenstops, availableSeats, flightNumber, carrierCode, carrierName, departureDate, totalPrice, taxIncludedInPrice], datecsv)
+                             duration, aantalTussenstops, availableSeats, flightNumber, carrierCode, carrierName, departureDate,departureTime,arrivalDate,arrivalTime, totalPrice, taxIncludedInPrice], datecsv)
 
 
 def init_csv(date):
@@ -143,7 +159,7 @@ def data_to_csv(data, date):
 def start():
     today = date.today()
     init_csv(today)
-    driver_init(today, DESTINATION_ARRAY[1])
+    driver_init(today, DESTINATION_ARRAY[9])
 
 
 start()
