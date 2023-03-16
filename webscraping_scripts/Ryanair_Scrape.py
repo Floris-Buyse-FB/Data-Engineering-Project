@@ -11,7 +11,7 @@ from datetime import date
 
 ORIGINS = ['BRU','CRL']
 DESTINATIONS = ['CFU','HER','RHO','BDS','NAP','PMO','FAO','ALC','IBZ','AGP','PMI','TFS']
-COLUMNS=['scrapeDate','flightNumber','departureAirportCode','departureAirportName','arrivalAirportCode','arrivalAirportName','departureDate','arrivalDate','carrierName','duration_formatted','price','originalPrice','hasDiscount','hasPromoDiscount','discountAmount','fareType','availableSeats','flightKey']
+COLUMNS=['scrapeDate','flightNumber','departureAirportCode','departureAirportName','arrivalAirportCode','arrivalAirportName','departureDate','arrivalDate','carrierName','duration_formatted','price','originalPrice','hasDiscount','hasPromoDiscount','discountAmount','fareType','availableSeats']
 
 #write the column of the cvs file
 def init_csv(date):
@@ -29,7 +29,7 @@ def data_to_csv(data,date):
 
 def get_data(datecsv):
     #loop over dates between 2023-04-01 AND 2023-10-01
-    for single_date in pd.date_range('2023-04-01','2023-10-31'):
+    for single_date in pd.date_range('2023-04-01','2023-10-01'):
         date =single_date.strftime("%Y-%m-%d")
 
         #loop over all departure airports
@@ -68,11 +68,11 @@ def get_data(datecsv):
                         discountAmount = f['regularFare']['fares'][0]["discountAmount"]
                         availableSeats = f['faresLeft']
                         fareType = f['regularFare']['fares'][0]["type"]
-                        flightKey = f['regularFare']['fareKey']
+                        
 
                         #put the scraped data in csv file
                         data_to_csv([datecsv,flightNumber,departureAirportCode,departureAirportName,arrivalAirportCode,arrivalAirportName,
-                        departureDate,arrivalDate,carrierName,duration_formatted,price,originalPrice,hasDiscount,hasPromoDiscount,discountAmount,fareType,availableSeats,flightKey],datecsv)
+                        departureDate,arrivalDate,carrierName,duration_formatted,price,originalPrice,hasDiscount,hasPromoDiscount,discountAmount,fareType,availableSeats],datecsv)
 
 def start():
     today = date.today()
