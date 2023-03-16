@@ -9,11 +9,15 @@ import random
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
+from selenium_stealth import stealth
+
 
 PATH = "C:\Program Files (x86)\Google\Chrome\Application\chromedriver.exe"
 
+
 # Driver
 options = webdriver.ChromeOptions()
+options.add_argument('--disable-blink-features=AutomationControlled')
 options.add_experimental_option("detach", True)
 options.add_argument('--ignore-certificate-errors')
 options.add_argument('--ignore-ssl-errors')
@@ -21,9 +25,18 @@ options.add_extension(
     r"C:\Users\emmad\AppData\Local\Google\Chrome\User Data\Default\Extensions\mpbjkejclgfgadiemmefgebjfooflfhl\2.0.1_0.crx")
 driver_service = Service(executable_path=PATH)
 driver = webdriver.Chrome(service=driver_service, options=options)
+stealth(driver,
+        languages=["nl-NL", "nl"],
+        vendor="Google Inc.",
+        platform="Win32",
+        webgl_vendor="Intel Inc.",
+        renderer="Intel Iris OpenGL Engine",
+        fix_hairline=True,
+        )
 action = ActionChains(driver)
 driver.maximize_window()
 driver.implicitly_wait(25)
+
 
 url = "https://www.transavia.com/nl-BE/boek-een-vlucht/vluchten/zoeken/"
 
