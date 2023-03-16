@@ -214,7 +214,8 @@ def navigate_excessive_search():
             time.sleep(5)
 
 
-        
+        data = driver.find_element(By.CSS_SELECTOR, ".bulletless.list.AS-destinations-list")
+        print(data.__getattribute__("innerHTML"))
            
 
 
