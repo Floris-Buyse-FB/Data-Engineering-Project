@@ -18,7 +18,7 @@ options.add_experimental_option("detach", True)
 options.add_argument('--ignore-certificate-errors')
 options.add_argument('--ignore-ssl-errors')
 options.add_extension(
-    r"C:\Users\buyse\AppData\Local\Google\Chrome\User Data\Default\Extensions\mpbjkejclgfgadiemmefgebjfooflfhl\2.0.1_0.crx")
+    r"C:\Users\emmad\AppData\Local\Google\Chrome\User Data\Default\Extensions\mpbjkejclgfgadiemmefgebjfooflfhl\2.0.1_0.crx")
 driver_service = Service(executable_path=PATH)
 driver = webdriver.Chrome(service=driver_service, options=options)
 action = ActionChains(driver)
@@ -120,7 +120,7 @@ solve_captcha()
 # DATA SCRAPEN
 # navigeren naar home page
 
-DESTINATIONS_ARRAY = ["Heraklion", "Rhodos", "Brindisi", "Napels", "Palermo", "Faro", "Alicante", "Ibiza",
+DESTINATIONS_ARRAY = ["Heraklion", "Faro", "Rhodos", "Alicante", "Ibiza",
                       "Malaga", "Palma-de-mallorca", "Tenerife"]
 
 MONTH_ARRAY = ['april 2023', 'mei 2023', 'juni 2023',
@@ -147,50 +147,50 @@ def navigate_excessive_search():
     time.sleep(2)
 
     # Bestemmingen toevoegen
-    add_dest_button = driver.find_element(
-        By.XPATH, '//*[@id="alternativesearch"]/div[2]/div[2]/div/div[2]/div/button')
-    for _ in range(10):
-        add_dest_button.click()
-        time.sleep(2)
+    # add_dest_button = driver.find_element(
+    #     By.XPATH, '//*[@id="alternativesearch"]/div[2]/div[2]/div/div[2]/div/button')
+    # for _ in range(10):
+    #     add_dest_button.click()
+    #     time.sleep(2)
 
-    # parent voor bestemmingen
-    parent = driver.find_element(
-        By.XPATH, '//*[@id="alternativesearch"]/div[2]/div[2]/div/div[2]/div')
-    children = parent.find_elements(By.CLASS_NAME, "HV-gs-type-e--bp0")
-    print(children)
-    print(f"\n\n{len(children)}")
-    for i in range(0, len(children)):
-        print(children[i].get_attribute("innerHTML"))
-        time.sleep(5)
-        children[i].click()
-        time.sleep(5)
-        bestemming = children[i].find_element(By.TAG_NAME, "input")
-        time.sleep(5)
-        bestemming.send_keys(DESTINATIONS_ARRAY[i])
-        time.sleep(4)
-        bestemming.send_keys(Keys.ARROW_DOWN)
-        bestemming.send_keys(Keys.ENTER)
-        time.sleep(2)
+    #parent voor bestemmingen
+    # parent = driver.find_element(
+    #     By.XPATH, '//*[@id="alternativesearch"]/div[2]/div[2]/div/div[2]/div')
+    # children = parent.find_elements(By.CLASS_NAME, "HV-gs-type-e--bp0")
+    # print(children)
+    # print(f"\n\n{len(children)}")
+    # for i in range(0, len(children)):
+    #     print(children[i].get_attribute("innerHTML"))
+    #     time.sleep(5)
+    #     children[i].click()
+    #     time.sleep(5)
+    #     bestemming = children[i].find_element(By.CLASS_NAME, "textfield")
+    #     time.sleep(5)
+    #     bestemming.send_keys(DESTINATIONS_ARRAY[i])
+    #     time.sleep(4)
+    #     bestemming.send_keys(Keys.ARROW_DOWN)
+    #     bestemming.send_keys(Keys.ENTER)
+    #     time.sleep(2)
 
     for element in DESTINATIONS_ARRAY:
-        # bestemming kiezen
+        #bestemming kiezen
         parent = driver.find_element(
             By.CSS_SELECTOR, ".HV-gs-type-e--bp0 .HV-gc .HV-gs-type-e--bp0:nth-of-type(2)")
         bestemming = parent.find_element(
             By.XPATH, '//*[@id="countryStationSelection_Destination-input"]')
         time.sleep(5)
+        bestemming.clear()
+        time.sleep(2)
         bestemming.send_keys(element)
         time.sleep(2)
         bestemming.send_keys(Keys.ARROW_DOWN)
         bestemming.send_keys(Keys.ENTER)
         time.sleep(2)
-        button = driver.find_element(
-            By.XPATH, '//*[@id="alternativesearch"]/div[2]/div[2]/div/div[2]/div/button')
-        button.click()
+   
 
         # enkele vlucht aanduiden
-        driver.find_element(
-            By.XPATH, '//*[@id="alternativesearch"]/div[4]/div[1]/div[2]/h3').click()
+        if element == 'Heraklion':
+            driver.find_element(By.XPATH, '//*[@id="alternativesearch"]/div[4]/div[1]/div[2]/h3').click()
         time.sleep(5)
         enkele = driver.find_element(By.NAME, 'timeFrameSelection.FlightType')
         time.sleep(2)
@@ -199,8 +199,6 @@ def navigate_excessive_search():
         enkele.send_keys(Keys.ARROW_DOWN)
         enkele.send_keys(Keys.ENTER)
 
-        # url_array
-        urls_per_bestemming = []
 
         # maand aanduiden
         for maand in MONTH_ARRAY:
@@ -215,18 +213,10 @@ def navigate_excessive_search():
             driver.find_element(By.XPATH, '//*[@id="HER"]/button[1]').click()
             time.sleep(5)
 
-            # idee was om per bestemming url van vluchten te krijgen > die afgaan elke url volgen > via beautifoulsoup ding proberen p elementen om te zetten in json object
-            # alle info is te vinden in die url (beetje gebaseerd op ryanair)
-            # zit dus vast tho"
-            #elements = [driver.find_elements(By.CSS_SELECTOR, 'p.text-align-right--bp25 > a')]
-            # print(elements)
-            # for element in elements:
-            #   urls_per_bestemming += [element.__getattribute__('href')]
-            # print(urls_per_bestemming)
 
-            #print([my_elem.get_attribute("href") for my_elem in driver.find_elements(By.XPATH, '//*[@id="top"]/div/div/div[2]/div/div[2]/div/div/section/ol/li/div/div/section/ol/li[2]/div[3]/div/ol/li/div/div[1]/div/div[2]/div/div[2]/p/a')])
+        
+           
 
-        # for link in urls_per_bestemming:
 
 
 navigate_excessive_search()
