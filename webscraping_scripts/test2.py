@@ -2,15 +2,19 @@ from seleniumwire import webdriver
 from selenium.webdriver.common.by import By
 from selenium_stealth import stealth
 from datetime import date
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import pandas as pd
 import time
 import gzip
 import io
 import json
 import csv
+import datetime
 
-DESTINATION_ARRAY = ["kerkyra", "heraklion", "rhodes", "brindisi", "napels", "palermo", "faro", "alicante", "ibiza",
-                     "malaga", "palma-de-mallorca", "tenerife"]
+s = ["heraklion", "rhodes", "brindisi", "napels", "palermo", "faro", "alicante", "ibiza",
+     "malaga", "palma-de-mallorca", "tenerife"]
+DESTINATION_ARRAY = ["kerkyra"]
 HEADERS = ['scrapeDate', 'departureAirportCode', 'departureAirportName', 'departureCountryCode', 'arrivalAirportCode', 'arrivalAirportName', 'arrivalCountryCode',
            'duration', 'aantalTussenstops', 'availableSeats', 'flightNumber', 'carrierCode', 'carrierName', 'departureDate', 'departureTime', 'arrivalDate', 'arrivalTime', 'totalPrice', 'taxIncludedInPrice']
 
@@ -26,7 +30,6 @@ options.add_argument('--disable-cache')
 
 driver = webdriver.Chrome(options=options)
 driver.maximize_window()
-driver.implicitly_wait(25)
 
 stealth(driver,
         languages=["nl-NL", "nl"],
@@ -43,7 +46,7 @@ stealth(driver,
 def driver_init(dest, dag=1, maand=3):
     # URL's
     url = f"https://www.brusselsairlines.com/lhg/be/nl/o-d/cy-cy/brussel-{dest}"
-    driver.get("https://www.google.com")
+    # driver.get("https://www.google.com")
     time.sleep(2)
     driver.get(url)
 
@@ -62,14 +65,16 @@ def driver_init(dest, dag=1, maand=3):
     time.sleep(2)
     driver.find_element(By.ID, "departureDate").click()
     time.sleep(2)
-    driver.find_element(By.CLASS_NAME, "move-forward").click()
+    for _ in range(3, maand):
+        driver.find_element(By.CLASS_NAME, "move-forward").click()
+        time.sleep(2)
     time.sleep(2)
     hulp_str = f'[data-date="{dag}"][data-month="{maand}"][data-year="2023"]'
     driver.find_element(
         By.CSS_SELECTOR, hulp_str).click()
     time.sleep(2)
     driver.find_element(By.ID, "searchFlights").click()
-    time.sleep(10)
+    time.sleep(5)
 
 # Data ophalen uit network requests
 
@@ -84,9 +89,9 @@ def get_data(datecsv):
                     fileobj=io.BytesIO(body)).read().decode('utf-8')
                 body_dict = json.loads(body_str)
             except:
-                body_dict = json.loads(body)
+                pass
 
-            if list(body_dict.keys())[0] != 'errors':
+            if len(list(body_dict)) >= 1 and list(body_dict.keys())[0] != 'errors':
                 data = body_dict["data"]["airBoundGroups"]
                 dictLocatie = body_dict["dictionaries"]["location"]
                 dictAirline = body_dict["dictionaries"]["airline"]
@@ -133,6 +138,8 @@ def get_data(datecsv):
         else:
             pass
 
+# hulp functies
+
 
 def month_to_number(month_string):
     month_map = {
@@ -153,10 +160,13 @@ def day_add_validate(day, month):
         return False
     return True
 
+# verander datum
+
 
 def veranderDatum(dest):
-    container = driver.find_element(
-        By.CSS_SELECTOR, ".carousel:first-of-type")
+    wait = WebDriverWait(driver, 100)
+    container = wait.until(EC.visibility_of_element_located(
+        (By.CSS_SELECTOR, ".carousel:first-of-type")))
     items = container.find_elements(By.TAG_NAME, "button")
     innerText4 = items[4].text
     innerText5 = items[5].text
@@ -164,19 +174,23 @@ def veranderDatum(dest):
     if "Geen tarieven" in innerText4 or "Uitverkocht" in innerText4:
         if "Geen tarieven" in innerText5 or "Uitverkocht" in innerText5:
             if "Geen tarieven" in innerText6 or "Uitverkocht" in innerText6:
-                full_items = container.find_elements(By.TAG_NAME, "li")
-                dag_str = full_items[6].find_element(
-                    By.CSS_SELECTOR, ".refx-body-1.cell-content-bottom .ng-star-inserted span").text.split()
-                dag = int(dag_str[1])
-                maand_str = driver.find_element(
-                    By.CSS_SELECTOR, ".selected-date").text.split()
-                maand = month_to_number(maand_str[2])
-                if day_add_validate(dag, maand):
-                    dag += 1
-                else:
-                    dag = 1
-                    maand += 1
-                driver_init(dest, dag, maand)
+                try:
+                    full_items = container.find_elements(By.TAG_NAME, "li")
+                    dag_str = full_items[6].find_element(
+                        By.CSS_SELECTOR, ".refx-body-1.cell-content-bottom .ng-star-inserted span").text.split()
+                    dag = int(dag_str[1])
+                    time.sleep(2)
+                    maand_str = wait.until(EC.visibility_of_element_located(
+                        (By.CSS_SELECTOR, ".selected-date"))).text.split()
+                    maand = month_to_number(maand_str[2])
+                    if day_add_validate(dag, maand):
+                        dag += 1
+                    else:
+                        dag = 1
+                        maand += 1
+                    driver_init(dest, dag, maand)
+                except:
+                    reset_proces_from_date(dest, date.today())
             else:
                 items[6].click()
         else:
@@ -185,12 +199,16 @@ def veranderDatum(dest):
         items[4].click()
     del items
 
+# csv init
+
 
 def init_csv(date):
     url = f'data/bruair/BruAirScrapeData_{date}.csv'
     with open(url, 'w', newline='') as file:
         writer = csv.writer(file)
         writer.writerow(HEADERS)
+
+# duplicate verwijderen uit csv
 
 
 def drop_duplicates(date):
@@ -199,6 +217,8 @@ def drop_duplicates(date):
     df.drop_duplicates(inplace=True)
     df.to_csv(url, index=False)
 
+# data naar csv
+
 
 def data_to_csv(data, date):
     url = f'./data/bruair/BruAirScrapeData_{date}.csv'
@@ -206,14 +226,18 @@ def data_to_csv(data, date):
         writer = csv.writer(file)
         writer.writerow(data)
 
+# start (gebeurt 1x)
+
 
 def start(dest):
     today = date.today()
     init_csv(today)
     driver_init(dest)
 
+# functies die na start komen en meerdere malen in loop worden uitgevoerd
 
-def sheesh(dest):
+
+def proces(dest):
     today = date.today()
     time.sleep(5)
     get_data(today)
@@ -223,13 +247,35 @@ def sheesh(dest):
     driver.refresh()
     time.sleep(5)
 
+# bij fouten in proces word de driver gereset en proces gaat verder vanaf de laatste datum in csv
 
-# TODO : Destination array loopen en range aanpassen
-start(DESTINATION_ARRAY[0])
-for _ in range(5):
-    sheesh(DESTINATION_ARRAY[0])
 
+def reset_proces_from_date(dest, date):
+    df = pd.read_csv(
+        f'./data/bruair/BruAirScrapeData_{date}.csv')
+    drop_duplicates(date)
+    last_row = df.tail(1)
+    last_departure_date = last_row['departureDate'].iloc[0]
+    date_object = datetime.datetime.strptime(
+        last_departure_date, '%Y-%m-%d')
+    driver_init(dest, date_object.day, date_object.month)
+
+# loop
+
+
+for j in DESTINATION_ARRAY:
+    curr_date = date.today()
+    start(j)
+    try:
+        datum = str(driver.find_element(
+            By.CSS_SELECTOR, ".selected-date").text)
+    except:
+        reset_proces_from_date(j, curr_date)
+    while datum not in ("maandag 2 oktober 2023", "dinsdag 3 oktober 2023", "woensdag 4 oktober 2023", "donderdag 5 oktober 2023"):
+        try:
+            proces(j)
+        except:
+            reset_proces_from_date(j, curr_date)
+
+# drop duplicates op einde van loop
 drop_duplicates(date.today())
-
-input("Press Enter to continue...")
-driver.quit()
