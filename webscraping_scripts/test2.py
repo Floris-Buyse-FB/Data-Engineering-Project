@@ -50,32 +50,34 @@ def driver_init(dest, dag=1, maand=3):
     time.sleep(2)
     driver.get(url)
 
-    # Cookie accept
     try:
-        driver.find_element(By.ID, "cm-acceptAll").click()
-    except:
-        pass
-    time.sleep(2)
-    driver.find_element(By.CLASS_NAME, "active-hidden").click()
-    time.sleep(2)
-
-    # Vlucht kiezen en datum selecteren
-    driver.find_element(
-        By.XPATH, "//label[contains(text(), 'Alleen enkele vlucht')]").click()
-    time.sleep(2)
-    driver.find_element(By.ID, "departureDate").click()
-    time.sleep(2)
-    for _ in range(3, maand):
-        driver.find_element(By.CLASS_NAME, "move-forward").click()
+        # Cookie accept
+        try:
+            driver.find_element(By.ID, "cm-acceptAll").click()
+        except:
+            pass
         time.sleep(2)
-    time.sleep(2)
-    hulp_str = f'[data-date="{dag}"][data-month="{maand}"][data-year="2023"]'
-    driver.find_element(
-        By.CSS_SELECTOR, hulp_str).click()
-    time.sleep(2)
-    driver.find_element(By.ID, "searchFlights").click()
-    time.sleep(5)
+        driver.find_element(By.CLASS_NAME, "active-hidden").click()
+        time.sleep(2)
 
+        # Vlucht kiezen en datum selecteren
+        driver.find_element(
+            By.XPATH, "//label[contains(text(), 'Alleen enkele vlucht')]").click()
+        time.sleep(2)
+        driver.find_element(By.ID, "departureDate").click()
+        time.sleep(2)
+        for _ in range(3, maand):
+            driver.find_element(By.CLASS_NAME, "move-forward").click()
+            time.sleep(2)
+        time.sleep(2)
+        hulp_str = f'[data-date="{dag}"][data-month="{maand}"][data-year="2023"]'
+        driver.find_element(
+            By.CSS_SELECTOR, hulp_str).click()
+        time.sleep(2)
+        driver.find_element(By.ID, "searchFlights").click()
+        time.sleep(5)
+    except:
+        reset_proces_from_date(dest, date.today())
 # Data ophalen uit network requests
 
 
