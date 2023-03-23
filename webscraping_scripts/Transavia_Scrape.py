@@ -21,8 +21,9 @@ options.add_argument('--disable-blink-features=AutomationControlled')
 options.add_experimental_option("detach", True)
 options.add_argument('--ignore-certificate-errors')
 options.add_argument('--ignore-ssl-errors')
+options.add_argument('--disable-blink-features=AutomationControlled')
 options.add_extension(
-    r"C:\Users\emmad\AppData\Local\Google\Chrome\User Data\Default\Extensions\mpbjkejclgfgadiemmefgebjfooflfhl\2.0.1_0.crx")
+    r"C:\Users\buyse\AppData\Local\Google\Chrome\User Data\Default\Extensions\mpbjkejclgfgadiemmefgebjfooflfhl\2.0.1_0.crx")
 driver_service = Service(executable_path=PATH)
 driver = webdriver.Chrome(service=driver_service, options=options)
 stealth(driver,
@@ -166,7 +167,7 @@ def navigate_excessive_search():
     #     add_dest_button.click()
     #     time.sleep(2)
 
-    #parent voor bestemmingen
+    # parent voor bestemmingen
     # parent = driver.find_element(
     #     By.XPATH, '//*[@id="alternativesearch"]/div[2]/div[2]/div/div[2]/div')
     # children = parent.find_elements(By.CLASS_NAME, "HV-gs-type-e--bp0")
@@ -186,7 +187,7 @@ def navigate_excessive_search():
     #     time.sleep(2)
 
     for element in DESTINATIONS_ARRAY:
-        #bestemming kiezen
+        # bestemming kiezen
         parent = driver.find_element(
             By.CSS_SELECTOR, ".HV-gs-type-e--bp0 .HV-gc .HV-gs-type-e--bp0:nth-of-type(2)")
         bestemming = parent.find_element(
@@ -199,11 +200,11 @@ def navigate_excessive_search():
         bestemming.send_keys(Keys.ARROW_DOWN)
         bestemming.send_keys(Keys.ENTER)
         time.sleep(2)
-   
 
         # enkele vlucht aanduiden
         if element == 'Heraklion':
-            driver.find_element(By.XPATH, '//*[@id="alternativesearch"]/div[4]/div[1]/div[2]/h3').click()
+            driver.find_element(
+                By.XPATH, '//*[@id="alternativesearch"]/div[4]/div[1]/div[2]/h3').click()
         time.sleep(5)
         enkele = driver.find_element(By.NAME, 'timeFrameSelection.FlightType')
         time.sleep(2)
@@ -211,7 +212,6 @@ def navigate_excessive_search():
         time.sleep(2)
         enkele.send_keys(Keys.ARROW_DOWN)
         enkele.send_keys(Keys.ENTER)
-
 
         # maand aanduiden
         for maand in MONTH_ARRAY:
@@ -226,11 +226,9 @@ def navigate_excessive_search():
             driver.find_element(By.XPATH, '//*[@id="HER"]/button[1]').click()
             time.sleep(5)
 
-
-        data = driver.find_element(By.CSS_SELECTOR, ".bulletless.list.AS-destinations-list")
+        data = driver.find_element(
+            By.CSS_SELECTOR, ".bulletless.list.AS-destinations-list")
         print(data.__getattribute__("innerHTML"))
-           
-
 
 
 navigate_excessive_search()
