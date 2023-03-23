@@ -234,3 +234,5 @@ def navigate_excessive_search():
 
 
 navigate_excessive_search()
+
+driver.close()
