@@ -11,7 +11,7 @@ from datetime import date
 
 ORIGINS = ['BRU','CRL']
 DESTINATIONS = ['CFU','HER','RHO','BDS','NAP','PMO','FAO','ALC','IBZ','AGP','PMI','TFS']
-COLUMNS=['scrapeDate','flightNumber','departureAirportCode','departureAirportName','arrivalAirportCode','arrivalAirportName','departureDate','arrivalDate','carrierName','duration_formatted','price','originalPrice','hasDiscount','hasPromoDiscount','discountAmount','fareType','availableSeats']
+COLUMNS=['scrapeDate','flightKey','flightNumber','departureAirportCode','departureAirportName','arrivalAirportCode','arrivalAirportName','departureDate','departureTime','arrivalDate','arrivalTime','carrierCode','carrierName','duration_formatted','price','originalPrice','hasDiscount','hasPromoDiscount','discountAmount','fareType','availableSeats']
 
 #write the column of the cvs file
 def init_csv(date):
@@ -56,8 +56,13 @@ def get_data(datecsv):
                 #if flights:
                     for f in flights:
                         flightNumber = f["flightNumber"]
-                        departureDate = f['segments'][0]['time'][0]
-                        arrivalDate = f['segments'][0]['time'][1]
+                        departure = f['segments'][0]['time'][0].split("T")
+                        departureDate = departure[0]
+                        departureTime = departure[1].split(".")[0]
+                        arrival = f['segments'][0]['time'][1].split("T")
+                        arrivalDate = arrival[0]
+                        arrivalTime = arrival[1].split(".")[0]
+                        carrierCode = flightNumber.split(" ")[0]
                         if not f["operatedBy"]:
                             carrierName  = "Ryanair"
                         else:
@@ -70,8 +75,9 @@ def get_data(datecsv):
                         discountAmount = f['regularFare']['fares'][0]["discountAmount"]
                         availableSeats = f['faresLeft']
                         fareType = f['regularFare']['fares'][0]["type"]
-                        data_to_csv([datecsv,flightNumber,departureAirportCode,departureAirportName,arrivalAirportCode,arrivalAirportName,
-                        departureDate,arrivalDate,carrierName,duration_formatted,price,originalPrice,hasDiscount,hasPromoDiscount,discountAmount,fareType,availableSeats],datecsv)
+                        flightkey = f"{flightNumber}_{departureDate}"
+                        data_to_csv([datecsv,flightkey,flightNumber,departureAirportCode,departureAirportName,arrivalAirportCode,arrivalAirportName,
+                        departureDate,departureTime,arrivalDate,arrivalTime,carrierCode,carrierName,duration_formatted,price,originalPrice,hasDiscount,hasPromoDiscount,discountAmount,fareType,availableSeats],datecsv)
                 except:
                         #no flights found, so no data to scrape
                         pass

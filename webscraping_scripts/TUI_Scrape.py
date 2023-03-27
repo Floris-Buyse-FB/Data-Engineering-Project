@@ -8,7 +8,7 @@ from selenium.webdriver.support import expected_conditions as EC
 import json, re, csv, pandas as pd
 
 def init_csv(today):
-    COLUMNS=["flightNumber", "scrapeDate", "departureAirportCode", "departureAirportName", "departureCountryCode", "departureDate", "departureTime", "arrivalAirportCode", "arrivalAirportName", "arrivalCountryCode", "arrivalDate", "arrivalTime", "adultPrice", "originalAdultPrice", "journeyType", "journeyDuration", "totalNumberOfStops", "carrierCode", "carrierName", "availableSeats", "isCheapest", "airportTax", "originalAirportTax", "bookingFee", "originalBookingFee", "isOriginalBooking"]
+    COLUMNS=["flightKey","flightNumber", "scrapeDate", "departureAirportCode", "departureAirportName", "departureCountryCode", "departureDate", "departureTime", "arrivalAirportCode", "arrivalAirportName", "arrivalCountryCode", "arrivalDate", "arrivalTime", "adultPrice", "originalAdultPrice", "journeyType", "journeyDuration", "totalNumberOfStops", "carrierCode", "carrierName", "availableSeats", "isCheapest", "airportTax", "originalAirportTax", "bookingFee", "originalBookingFee", "isOriginalBooking"]
     url = f'data/tuifly/tuiFlyScrapeData_{today}.csv'
     with open(url, 'w', newline='') as file: 
         writer = csv.writer(file)
@@ -54,7 +54,6 @@ def get_useful_data(raw_data, today):
             if str(flight["journeySummary"]["departAirportCode"]) in("BRU", "LGG", "OST", "ANR") and date(2023, 4, 1) <= date(2023, int(date_parts[1]), int(date_parts[2])) and date(2023, int(date_parts[1]), int(date_parts[2])) <= date(2023, 10, 1):
                 departureCountryCode = raw_data["depAirportData"][0]["countryCode"]
                 arrivalCountryCode = raw_data["arrAirportData"][0]["countryCode"]
-                flightNumber = flight['flightsectors'][0]['flightNumber']
                 departureAirportCode = flight["journeySummary"]["departAirportCode"]
                 departureAirportName = flight["flightsectors"][0]["departureAirport"]["name"]
                 departureDate = flight["departureDate"]
@@ -72,6 +71,8 @@ def get_useful_data(raw_data, today):
                 totalNumberOfStops = flight["journeySummary"]["totalNumberOfStops"]
                 carrierCode = flight["journeySummary"]["carrierCode"]
                 carrierName = flight["journeySummary"]["carrierName"]
+                number = flight['flightsectors'][0]['flightNumber']
+                flightNumber = f"{carrierCode} {number}"
                 availableSeats = flight["journeySummary"]["availableSeats"]
                 isCheapest = flight["isCheapest"]
                 airportTax = flight["airportTax"]
@@ -79,7 +80,9 @@ def get_useful_data(raw_data, today):
                 bookingFee = flight["bookingFee"]
                 originalBookingFee = flight["originalBookingFee"]
                 isOriginalBooking = flight["isOriginalBooking"]
+                flightKey = f"{flightNumber}_{departureDate}"
                 data_to_csv([
+                    flightKey,
                     flightNumber,
                     today,
                     departureAirportCode,
