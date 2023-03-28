@@ -2,7 +2,7 @@ import http.client, urllib.request, urllib.parse, urllib.error, base64, datetime
 from datetime import date
 
 DESTINATIONS = ['FAO','HER','ALC','IBZ','AGP','TFS']
-COLUMNS=['scrapeDate', 'departAirport', 'arrivalAirport', 'marketingAirline', "departureDate", "arrivalDate", "flightNumber", "totalPrice", "baseFare", "taxSurcharge" ]
+COLUMNS=['scrapeDate','flightKey', 'departAirport', 'arrivalAirport', 'marketingAirline','carrierName', "departureDate",'departureTime', "arrivalDate",'arrivalTime', "flightNumber", "totalPrice", "baseFare", "taxSurcharge" ]
 
 
 
@@ -54,12 +54,11 @@ def getData(element,date,scrapeDate):
         response = conn.getresponse()
 
         data = response.read()
+        #print(data)
         if len(data) != 0:
             string = data.decode('utf-8')
-            
             jsonData = json.loads(string)
             clean_data(jsonData,scrapeDate)
-
 
         conn.close()
 
@@ -89,12 +88,22 @@ def clean_data(json,scrapeDate):
             departAirport= outboundFlight["departureAirport"]["locationCode"]
             arrivalAirport = outboundFlight["arrivalAirport"]["locationCode"]
             marketingAirline = outboundFlight['marketingAirline']['companyShortName']
-            departureDateTime = outboundFlight["departureDateTime"]
-            arrivalDateTime = outboundFlight["arrivalDateTime"]
-            flightNumber = outboundFlight["flightNumber"]
+            if marketingAirline == 'HV':
+                carrierName =  "Transavia"
+            else:
+                carrierName = ""
+            departure = outboundFlight["departureDateTime"].split("T")
+            departureDate = departure[0]
+            departureTime = departure[1]
+            arrival = outboundFlight["arrivalDateTime"].split("T")
+            arrivalDate = arrival[0]
+            arrivalTime = arrival[1]
+            number = outboundFlight["flightNumber"]
+            flightNumber = f"{marketingAirline} {number}"
             totalPriceOnePassenger = pricingInfoSum["totalPriceOnePassenger"]
             baseFare = pricingInfoSum["baseFare"]
             taxSurcharge = pricingInfoSum["taxSurcharge"]
-            data_to_csv([scrapeDate, departAirport, arrivalAirport, marketingAirline, departureDateTime, arrivalDateTime, flightNumber, totalPriceOnePassenger, baseFare, taxSurcharge],scrapeDate)
+            flightKey = f"{flightNumber}_{departureDate}"
+            data_to_csv([scrapeDate,flightKey, departAirport, arrivalAirport, marketingAirline, carrierName,departureDate,departureTime, arrivalDate,arrivalTime, flightNumber, totalPriceOnePassenger, baseFare, taxSurcharge],scrapeDate)
 
 start()
