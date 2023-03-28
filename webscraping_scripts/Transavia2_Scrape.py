@@ -54,7 +54,6 @@ def getData(element,date,scrapeDate):
         response = conn.getresponse()
 
         data = response.read()
-        print(data)
         if len(data) != 0:
             string = data.decode('utf-8')
             
@@ -84,7 +83,6 @@ def data_to_csv(data,date):
 
 
 def clean_data(json,scrapeDate):
-        print(json['flightOffer'])
         for f in json["flightOffer"]:
             outboundFlight = f["outboundFlight"]
             pricingInfoSum = f["pricingInfoSum"]

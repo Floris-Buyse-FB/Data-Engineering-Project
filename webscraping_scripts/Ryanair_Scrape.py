@@ -15,14 +15,14 @@ COLUMNS=['scrapeDate','flightNumber','departureAirportCode','departureAirportNam
 
 #write the column of the cvs file
 def init_csv(date):
-    url = f'data/ryanair/ryanairScrapeData_{date}.csv'
+    url = f'../data/ryanair/ryanairScrapeData_{date}.csv'
     with open(url, 'w', newline='') as file: 
         writer = csv.writer(file)
         writer.writerow(COLUMNS)  
 
 #append a row of data to the csv file
 def data_to_csv(data,date):
-    url = f'data/ryanair/ryanairScrapeData_{date}.csv'
+    url = f'../data/ryanair/ryanairScrapeData_{date}.csv'
     with open(url, 'a', newline='') as file: 
         writer = csv.writer(file)
         writer.writerow(data)            

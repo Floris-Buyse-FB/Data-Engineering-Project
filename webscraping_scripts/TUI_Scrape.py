@@ -9,19 +9,19 @@ import json, re, csv, pandas as pd
 
 def init_csv(today):
     COLUMNS=["flightNumber", "scrapeDate", "departureAirportCode", "departureAirportName", "departureCountryCode", "departureDate", "departureTime", "arrivalAirportCode", "arrivalAirportName", "arrivalCountryCode", "arrivalDate", "arrivalTime", "adultPrice", "originalAdultPrice", "journeyType", "journeyDuration", "totalNumberOfStops", "carrierCode", "carrierName", "availableSeats", "isCheapest", "airportTax", "originalAirportTax", "bookingFee", "originalBookingFee", "isOriginalBooking"]
-    url = f'data/tuifly/tuiFlyScrapeData_{today}.csv'
+    url = f'../data/tuifly/tuiFlyScrapeData_{today}.csv'
     with open(url, 'w', newline='') as file: 
         writer = csv.writer(file)
         writer.writerow(COLUMNS)
 
 def data_to_csv(data, today):
-    url = f'data/tuifly/tuiFlyScrapeData_{today}.csv'
+    url = f'../data/tuifly/tuiFlyScrapeData_{today}.csv'
     with open(url, 'a', newline='') as file: 
         writer = csv.writer(file)
         writer.writerow(data)
 
 def get_raw_data(url):
-        PATH = "C:\Program Files (x86)\Google\Chrome\Application\chromedriver.exe"
+        PATH = "../../.cache/selenium/chromedriver/linux64/111.0.5563.64/chromedriver"
         options = webdriver.ChromeOptions()
         options.add_experimental_option("detach", True)
         options.add_argument('--ignore-certificate-errors')

@@ -4,6 +4,8 @@ from selenium_stealth import stealth
 from datetime import date
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from requests_ip_rotator import ApiGateway
+import requests
 import pandas as pd
 import time
 import gzip
@@ -46,6 +48,14 @@ stealth(driver,
 def driver_init(dest, dag=1, maand=3):
     # URL's
     url = f"https://www.brusselsairlines.com/lhg/be/nl/o-d/cy-cy/brussel-{dest}"
+
+    with ApiGateway(url) as g:
+        session = requests.Session()
+        session.mount(url, g)
+
+        response = session.get(url=url, headers=HEADERS)
+        print(response.status_code)
+
     # driver.get("https://www.google.com")
     time.sleep(2)
     driver.get(url)
