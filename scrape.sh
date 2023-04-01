@@ -4,6 +4,9 @@ set -o errexit   # abort on nonzero exitstatus
 set -o nounset   # abort on unbound variable
 set -o pipefail  # don't hide errors within pipes
 
+#Activate virtual environment
+source /home/vicuser/myenv/bin/activate
+
 #USAGE: run_script file
 # excecute a python script
 run_script() {
@@ -13,7 +16,7 @@ run_script() {
     python3 $path$file
 }
 
-#USSAGE: log message
+#USAGE: log message
 # log a message to log files
 log() {
     local message="${1}"
@@ -23,14 +26,14 @@ log() {
 }
 
 #Data ophalen
-#log "Transavia" "start"
-#run_script Transavia2_Scrape.py
-#log "Transavia" "completed"
+log "Transavia" "start"
+run_script Transavia2_Scrape.py
+log "Transavia" "completed"
 
 #Data ophalen
-#log "RyanAir" "start"
-#run_script Ryanair_Scrape.py
-#log "RyanAir" "completed"
+log "RyanAir" "start"
+run_script Ryanair_Scrape.py
+log "RyanAir" "completed"
 
 #Data ophalen
 log "TUI" "start"
@@ -39,6 +42,13 @@ log "TUI" "completed"
 
 #Data ophalen
 # log "Brussels Airlines" "start"
-# run_script test2.py
+# run_script BrusselsAirlines2_Scrape.py
 # log "Brussels Airlines" "completed"
 
+#Pipeline uitvoeren
+log "Pipeline" "start"
+run_script csv_to_db.py
+log "Pipeline" "completed"
+
+#Deactivate virtual environment
+deactivate
