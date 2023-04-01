@@ -15,14 +15,14 @@ COLUMNS=['scrapeDate','flightKey','flightNumber','departureAirportCode','departu
 
 #write the column of the cvs file
 def init_csv(date):
-    url = f'../data/ryanair/ryanairScrapeData_{date}.csv'
+    url = f'data/ryanair/ryanairScrapeData_{date}.csv'
     with open(url, 'w', newline='') as file: 
         writer = csv.writer(file)
         writer.writerow(COLUMNS)  
 
 #append a row of data to the csv file
 def data_to_csv(data,date):
-    url = f'../data/ryanair/ryanairScrapeData_{date}.csv'
+    url = f'data/ryanair/ryanairScrapeData_{date}.csv'
     with open(url, 'a', newline='') as file: 
         writer = csv.writer(file)
         writer.writerow(data)            
@@ -75,7 +75,7 @@ def get_data(datecsv):
                         discountAmount = f['regularFare']['fares'][0]["discountAmount"]
                         availableSeats = f['faresLeft']
                         fareType = f['regularFare']['fares'][0]["type"]
-                        flightkey = f"{flightNumber}_{departureDate}"
+                        flightkey = f"{flightNumber}_{departureDate}_{departureTime}"
                         data_to_csv([datecsv,flightkey,flightNumber,departureAirportCode,departureAirportName,arrivalAirportCode,arrivalAirportName,
                         departureDate,departureTime,arrivalDate,arrivalTime,carrierCode,carrierName,duration_formatted,price,originalPrice,hasDiscount,hasPromoDiscount,discountAmount,fareType,availableSeats],datecsv)
                 except:

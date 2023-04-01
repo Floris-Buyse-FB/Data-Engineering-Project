@@ -9,6 +9,7 @@ set -o pipefail  # don't hide errors within pipes
 run_script() {
     local path="/home/vicuser/Data-Engineering-Project/webscraping_scripts/"
     local file="${1}"
+    echo "Running script: ${file}"
     python3 $path$file
 }
 
@@ -21,23 +22,20 @@ log() {
     echo "${1} | ${2} | ${current_date}" >> $LOGFILE
 }
 
-
-
+#Data ophalen
+#log "Transavia" "start"
+#run_script Transavia2_Scrape.py
+#log "Transavia" "completed"
 
 #Data ophalen
-log "Transavia" "start"
-run_script Transavia2_Scrape.py
-log "Transavia" "completed"
+#log "RyanAir" "start"
+#run_script Ryanair_Scrape.py
+#log "RyanAir" "completed"
 
 #Data ophalen
-# log "RyanAir" "start"
-# run_script Ryanair_Scrape.py
-# log "RyanAir" "completed"
-
-#Data ophalen
-# log "TUI" "start"
-# run_script TUI_Scrape.py
-# log "TUI" "completed"
+log "TUI" "start"
+run_script TUI_Scrape.py
+log "TUI" "completed"
 
 #Data ophalen
 # log "Brussels Airlines" "start"

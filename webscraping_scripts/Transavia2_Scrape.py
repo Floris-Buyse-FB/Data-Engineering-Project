@@ -1,5 +1,6 @@
 import http.client, urllib.request, urllib.parse, urllib.error, base64, datetime,csv,json
 from datetime import date
+import pandas as pd
 
 DESTINATIONS = ['FAO','HER','ALC','IBZ','AGP','TFS']
 COLUMNS=['scrapeDate','flightKey', 'departAirport', 'arrivalAirport', 'marketingAirline','carrierName', "departureDate",'departureTime', "arrivalDate",'arrivalTime', "flightNumber", "totalPrice", "baseFare", "taxSurcharge" ]
@@ -17,20 +18,12 @@ headers = {
 def start():
     scrapeDate = date.today()
     init_csv(scrapeDate)
-    start_date = datetime.date(2023, 4, 1)
-    end_date = datetime.date(2023, 10, 1)
 
-    current_date = start_date
-    while current_date <= end_date:
-        date_str = current_date.strftime("%Y%m%d")
+    for single_date in pd.date_range('2023-04-01','2023-10-01'):
+        d =single_date.strftime("%Y%m%d")
 
         for element in DESTINATIONS:
-            getData(element,date_str,scrapeDate)
-
-        current_date += datetime.timedelta(days=1)
-    
-
-
+            getData(element,d,scrapeDate)
 
 def getData(element,date,scrapeDate):
     params = urllib.parse.urlencode({
@@ -103,7 +96,7 @@ def clean_data(json,scrapeDate):
             totalPriceOnePassenger = pricingInfoSum["totalPriceOnePassenger"]
             baseFare = pricingInfoSum["baseFare"]
             taxSurcharge = pricingInfoSum["taxSurcharge"]
-            flightKey = f"{flightNumber}_{departureDate}"
+            flightKey = f"{flightNumber}_{departureDate}_{departureTime}"
             data_to_csv([scrapeDate,flightKey, departAirport, arrivalAirport, marketingAirline, carrierName,departureDate,departureTime, arrivalDate,arrivalTime, flightNumber, totalPriceOnePassenger, baseFare, taxSurcharge],scrapeDate)
 
 start()
