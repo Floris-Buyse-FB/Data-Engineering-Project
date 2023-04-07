@@ -1,12 +1,21 @@
-#! /bin/bash
+#!/bin/bash
 
 set -o errexit   # abort on nonzero exitstatus
 set -o nounset   # abort on unbound variable
 set -o pipefail  # don't hide errors within pipes
 
+# Check if lock file exists
+if [ -f /tmp/scrape.lock ]; then
+    exit 1
+fi
+
+# Create lock file
+touch /tmp/scrape.lock
+
 #Activate virtual environment
 source /home/vicuser/myenv/bin/activate
 
+today=$(date +"%Y-%m-%d")
 #USAGE: run_script file
 # excecute a python script
 run_script() {
@@ -19,7 +28,6 @@ run_script() {
 #USAGE: log message
 # log a message to log files
 log() {
-    local message="${1}"
     local current_date=$(date +"%Y-%m-%d %H:%M:%S")
     local LOGFILE=/home/vicuser/Data-Engineering-Project/logs/logs.txt
     echo "${1} | ${2} | ${current_date}" >> $LOGFILE
@@ -27,17 +35,23 @@ log() {
 
 #Data ophalen
 log "Transavia" "start"
-run_script Transavia2_Scrape.py
+touch /home/vicuser/Data-Engineering-Project/data/transavia/transaviaScrapeData_${today}.csv && chmod 666 /home/vicuser/Data-Engineering-Project/data/transavia/transaviaScrapeData_${today}.csv
+run_script Transavia2_Scrape.py &
+wait
 log "Transavia" "completed"
 
 #Data ophalen
 log "RyanAir" "start"
-run_script Ryanair_Scrape.py
+touch /home/vicuser/Data-Engineering-Project/data/ryanair/ryanairScrapeData_${today}.csv && chmod 666 /home/vicuser/Data-Engineering-Project/data/ryanair/ryanairScrapeData_${today}.csv
+run_script Ryanair_Scrape.py &
+wait
 log "RyanAir" "completed"
 
 #Data ophalen
 log "TUI" "start"
-run_script TUI_Scrape.py
+touch /home/vicuser/Data-Engineering-Project/data/tuifly/tuiFlyScrapeData_${today}.csv && chmod 666 /home/vicuser/Data-Engineering-Project/data/tuifly/tuiFlyScrapeData_${today}.csv
+run_script TUI_Scrape.py &
+wait
 log "TUI" "completed"
 
 #Data ophalen
@@ -52,3 +66,8 @@ log "Pipeline" "completed"
 
 #Deactivate virtual environment
 deactivate
+
+# Remove lock file
+rm /tmp/scrape.lock
+
+log "Scrape" "completed"
