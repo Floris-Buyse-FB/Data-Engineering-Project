@@ -1,12 +1,11 @@
 from selenium import webdriver
-from datetime import date, datetime,timedelta
+from datetime import date, timedelta
 from selenium.webdriver.chrome.service import Service 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 # from webdriver_manager.chrome import ChromeDriverManager 
 import json, re, csv, pandas as pd
-import time
 
 def init_csv(today):
     COLUMNS=["flightKey","flightNumber", "scrapeDate", "departureAirportCode", "departureAirportName", "departureCountryCode", "departureDate", "departureTime", "arrivalAirportCode", "arrivalAirportName", "arrivalCountryCode", "arrivalDate", "arrivalTime", "adultPrice", "originalAdultPrice", "journeyType", "journeyDuration", "totalNumberOfStops", "carrierCode", "carrierName", "availableSeats", "isCheapest", "airportTax", "originalAirportTax", "bookingFee", "originalBookingFee", "isOriginalBooking"]
@@ -118,19 +117,18 @@ def get_useful_data(raw_data, today):
                     bookingFee,
                     originalBookingFee,
                     isOriginalBooking
-                    ], today)
+                    ], str(today))
         except:
             print("An error has occured in get_useful_data()") 
 
 def start():
-    today = date.today()
-    today = today.strftime("%Y-%m-%d")
+    today = date.today().strftime("%Y-%m-%d")
     init_csv(today)
-    DESTINATION = ['CFU','HER','RHO','BDS','NAP','PMO','FAO','ALC','IBZ','AGP','PMI','TFS']
+    DESTINATION = ['ALC','CFU','HER','RHO','BDS','NAP','PMO','FAO','IBZ','AGP','PMI','TFS']
 
-    for depDate in pd.date_range(start='2023-04-01', end='2023-10-1', freq='7D'):
+    for depDate in pd.date_range(start=today, end='2023-10-1', freq='7D'):
         for destination in DESTINATION:
-            print(f"Scraping {destination} for {depDate.strftime('%Y-%m-%d')} - {(depDate+timedelta(days=7)).strftime('%Y-%m-%d')}")
+            # print(f"Scraping {destination} for {depDate.strftime('%Y-%m-%d')} - {(depDate+timedelta(days=7)).strftime('%Y-%m-%d')}")
             url = f'http://www.tuifly.be/flight/nl/search?flyingFrom%5B%5D=BRU&flyingTo%5B%5D={destination}&depDate={depDate.strftime("%Y-%m-%d")}&adults=1&children=0&childAge=&choiceSearch=true&searchType=pricegrid&nearByAirports=true&currency=EUR&isOneWay=true'
             try:
                 raw_data = get_raw_data(url)

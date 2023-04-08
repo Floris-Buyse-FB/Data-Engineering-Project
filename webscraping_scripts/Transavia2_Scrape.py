@@ -1,4 +1,5 @@
 import http.client, urllib.request, urllib.parse, urllib.error, base64, datetime,csv,json
+import errno
 from datetime import date
 import pandas as pd
 
@@ -19,7 +20,7 @@ def start():
     scrapeDate = date.today()
     init_csv(scrapeDate)
 
-    for single_date in pd.date_range('2023-04-01','2023-10-01'):
+    for single_date in pd.date_range(scrapeDate,'2023-10-01'):
         d =single_date.strftime("%Y%m%d")
 
         for element in DESTINATIONS:
@@ -56,19 +57,22 @@ def getData(element,date,scrapeDate):
         conn.close()
 
     except Exception as e:
+        try:
+            print("[Errno {0}] {1}".format(e.errno, e.strerror))
+        except AttributeError:
+            print("An exception occurred: {}".format(str(e)))
 
-        print("[Errno {0}] {1}".format(e.errno, e.strerror))
 
 
 def init_csv(date):
-    url = f'data/transavia/transaviaScrapeData_{date}.csv'
+    url = f'/home/vicuser/Data-Engineering-Project/data/transavia/transaviaScrapeData_{date}.csv'
     with open(url, 'w', newline='') as file: 
         writer = csv.writer(file)
         writer.writerow(COLUMNS)  
 
 #append a row of data to the csv file
 def data_to_csv(data,date):
-    url = f'data/transavia/transaviaScrapeData_{date}.csv'
+    url = f'/home/vicuser/Data-Engineering-Project/data/transavia/transaviaScrapeData_{date}.csv'
     with open(url, 'a', newline='') as file: 
         writer = csv.writer(file)
         writer.writerow(data)       

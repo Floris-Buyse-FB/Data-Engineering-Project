@@ -15,21 +15,21 @@ COLUMNS=['scrapeDate','flightKey','flightNumber','departureAirportCode','departu
 
 #write the column of the cvs file
 def init_csv(date):
-    url = f'data/ryanair/ryanairScrapeData_{date}.csv'
+    url = f'/home/vicuser/Data-Engineering-Project/data/ryanair/ryanairScrapeData_{date}.csv'
     with open(url, 'w', newline='') as file: 
         writer = csv.writer(file)
         writer.writerow(COLUMNS)  
 
 #append a row of data to the csv file
 def data_to_csv(data,date):
-    url = f'data/ryanair/ryanairScrapeData_{date}.csv'
+    url = f'/home/vicuser/Data-Engineering-Project/data/ryanair/ryanairScrapeData_{date}.csv'
     with open(url, 'a', newline='') as file: 
         writer = csv.writer(file)
         writer.writerow(data)            
 
 def get_data(datecsv):
     #loop over dates between 2023-04-01 AND 2023-10-01
-    for single_date in pd.date_range('2023-04-01','2023-10-01'):
+    for single_date in pd.date_range(datecsv,'2023-10-01'):
         date =single_date.strftime("%Y-%m-%d")
 
         #loop over all departure airports
@@ -85,15 +85,16 @@ def get_data(datecsv):
                         #put the scraped data in csv file
 
 def start():
-    today = date.today()
+    today = date.today().strftime("%Y-%m-%d")
     try:
         init_csv(today)
+        try:
+            get_data(today)
+        except Exception as e:
+            print(str(e))
+            print("an error occured in get_data()")
     except:
         print("an error occured in init_csv()")
-    try:
-        get_data(today)
-    except:
-        print("an error occured in get_data()")
-
+    
 start()
 # raw data {'faresLeft': 4, 'flightKey': 'FR~2923~ ~~BRU~03/26/2023 09:55~AGP~03/26/2023 12:50~~', 'infantsLeft': 13, 'regularFare': {'fareKey': 'BRS4IK66UVTAORXBUNPKZCBVNFJYSREAYHVKE6XH7SWRQ3UHROY377UTMYV3WY6IFIPAJXYQT7YHMKEV2ZTJJ3TKRFXWVZYVNOXBTOGLXPPF43MUK4DLPJLGSC52HCXXRZCPXBK4VBGW44FI55ATHRXATHQTGWURCGIFOJAVZEHJEHUS2SNUHI67CRCWV5ANY43HCEDA2MWDWMR2B7D4ZI3NCC43CYXELDWUZLQ', 'fareClass': 'C', 'fares': [{'type': 'ADT', 'amount': 90.73, 'count': 1, 'hasDiscount': False, 'publishedFare': 90.73, 'discountInPercent': 0, 'hasPromoDiscount': False, 'discountAmount': 0.0, 'hasBogof': False}]}, 'operatedBy': '', 'segments': [{'segmentNr': 0, 'origin': 'BRU', 'destination': 'AGP', 'flightNumber': 'FR 2923', 'time': ['2023-03-26T09:55:00.000', '2023-03-26T12:50:00.000'], 'timeUTC': ['2023-03-26T07:55:00.000Z', '2023-03-26T10:50:00.000Z'], 'duration': '02:55'}], 'flightNumber': 'FR 2923', 'time': ['2023-03-26T09:55:00.000', '2023-03-26T12:50:00.000'], 'timeUTC': ['2023-03-26T07:55:00.000Z', '2023-03-26T10:50:00.000Z'], 'duration': '02:55'}
