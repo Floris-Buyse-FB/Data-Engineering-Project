@@ -1,0 +1,45 @@
+FR1302  Boeing 737-800  5y      189     --
+FR1310  Boeing 737-800  --      --      --
+FR1916  Boeing 737-800  5y      189     1688km
+FR1928  Boeing 737-800  5y      189     1688km
+FR2915  Boeing 737-800  --      --      1268km
+FR2923  Boeing 737-800  5y      189     1733km
+FR2941  Boeing 737-800  --      --      --
+FR3534  Boeing 737-800  --      --      1410km
+FR563   Boeing 737-800  5y      189     3055km
+FR6251  Boeing 737-800  --      --      --
+FR6269  Boeing 737-800  --      --      --
+FR6312  Boeing 737-800  5y      189     --
+FR6456  Boeing 737-800  --      --      --
+FR7737  Boeing 737-800  --      --      1511km
+FR7831  Boeing 737-800  --      --      1218km
+FR7986  Boeing 737-800  --      --      2364km
+FR8577  Boeing 737-800  --      --      2446km
+FR9053  Boeing 737-800  5y      189     1410km
+HV9003  Boeing 737-800  5y      189     1458km
+HV9007  Boeing 737-800  14y     189     1831km
+HV9009  Boeing 737-800  14y     189     1358km
+HV9121  Boeing 737-800  13y     189     1458km
+HV9209  Boeing 737-800  14y     189     2393km
+HV9211  Boeing 737-800  5y      189     2393km
+TB1001  Embraer 190     5y      112     1772km
+TB1003  Embraer 190     5y      112     1772km
+TB1011  Boeing 737      14y, 9m 148     1733km
+TB1013  Airbus A320     13y, 7m 180     1733km
+TB1071  Boeing 737-800  14y, 9m 189     1714km
+TB1101  Embraer 190     5y      112     1495km
+TB1103  Embraer 190     5y      112     1495km
+TB1105  Embraer 190     5y      112     1495km
+TB1111  Boeing 737-800  11y, 8m 189     1458km
+TB1113  Airbus A320     9y, 3m  180     1458km
+TB1135  Boeing 737-800  5y      189     1654km
+TB1171  Boeing 737-800  10y, 1m 189     1460km
+TB1411  Boeing 737      5y      148     1268km
+TB1413  Boeing 737-800  5y      189     1268km
+TB1751  Airbus A320     9y, 3m  180     3093km
+TB1753  Boeing 767-300/300ER    23y, 2m 300     3093km
+TB1755  Boeing 737-800  5y      189     3093km
+TB1791  Boeing 737-800  18y, 4m 189     3072km
+TB1801  Boeing 737-800  5y      189     3043km
+TB1811  Boeing 737-800  5y      189     3043km
+TB1941  Boeing 737      5y      148     1831km
