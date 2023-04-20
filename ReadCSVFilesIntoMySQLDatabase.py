@@ -33,8 +33,59 @@ class Price(Model):
     class Meta:
         database = db
 
+class Airport(Model):
+    airportCode = CharField(max_length=50, unique=True, index=True)
+    airportName = CharField(max_length=255)
+    city = CharField(max_length=255)
+    country = CharField(max_length=255)
+
+    class Meta:
+        database = db
+
+class Airline(Model):
+    carrierCode = CharField(max_length=50, unique=True, index=True)
+    carrierName = CharField(max_length=255)
+
+    class Meta:
+        database = db
+
 # create the tables if they don't exist
-db.create_tables([Flight, Price])
+db.create_tables([Flight, Price, Airport, Airline])
+
+try:
+    # insert the airport records
+    with open('./data/csv2/airport.csv', 'r') as csvfile:
+        reader = csv.reader(csvfile)
+        for row in reader:
+            if row == []:
+                continue
+            else:
+                if not Airport.select().where(Airport.airportCode == row[0]).exists():
+                    with db.atomic():
+                        Airport.create(
+                            airportCode=row[0],
+                            airportName=row[1],
+                            city=row[2],
+                            country=row[3]
+                        )
+                    db.commit()
+
+    # insert the airline records
+    with open('./data/csv2/airline.csv', 'r') as csvfile:
+        reader = csv.reader(csvfile)
+        for row in reader:
+            if row == []:
+                continue
+            else:
+                if not Airline.select().where(Airline.carrierCode == row[0]).exists():
+                    with db.atomic():
+                        Airline.create(
+                            carrierCode=row[0],
+                            carrierName=row[1]
+                        )
+                    db.commit()
+except Exception as e:
+    print("Error while connecting to MySQL", e)
 
 try:
     start_date = date(2023, 4, 6)
