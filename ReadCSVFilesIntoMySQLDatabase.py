@@ -4,35 +4,9 @@ import csv
 from peewee import *
 
 # create the database connection
-db = MySQLDatabase('airfares', user='root', password='toor', host='localhost', autocommit=True)
+db = MySQLDatabase('airfares', user='root', password='root', host='localhost', autocommit=True)
 
 # define the models
-class Flight(Model):
-    flightKey = CharField(max_length=255, unique=True, index=True)
-    flightNumber = CharField(max_length=50)
-    departureDate = DateField()
-    arrivalDate = DateField()
-    departureTime = TimeField()
-    arrivalTime = TimeField()
-    journeyDuration = TimeField()
-    totalNumberOfStops = IntegerField()
-    carrierCode = CharField(max_length=50)
-    depAirportCode = CharField(max_length=50)
-    arrAirportCode = CharField(max_length=50)
-
-    class Meta:
-        database = db
-
-class Price(Model):
-    priceID = AutoField()
-    flightKey = ForeignKeyField(Flight, to_field='flightKey', on_delete='CASCADE', on_update='CASCADE')
-    scrapeDate = DateField()
-    availableSeats = IntegerField()
-    adultPrice = FloatField()
-
-    class Meta:
-        database = db
-
 class Airport(Model):
     airportCode = CharField(max_length=50, unique=True, index=True)
     airportName = CharField(max_length=255)
@@ -48,6 +22,33 @@ class Airline(Model):
 
     class Meta:
         database = db
+
+class Flight(Model):
+    flightKey = CharField(max_length=255, unique=True, index=True)
+    flightNumber = CharField(max_length=50)
+    departureDate = DateField()
+    arrivalDate = DateField()
+    departureTime = TimeField()
+    arrivalTime = TimeField()
+    journeyDuration = TimeField()
+    totalNumberOfStops = IntegerField()
+    carrierCode = ForeignKeyField(Airline, to_field='carrierCode', on_delete='CASCADE', on_update='CASCADE')
+    depAirportCode = ForeignKeyField(Airport, to_field='airportCode', on_delete='CASCADE', on_update='CASCADE', backref='departures')
+    arrAirportCode = ForeignKeyField(Airport, to_field='airportCode', on_delete='CASCADE', on_update='CASCADE', backref='arrivals')
+
+    class Meta:
+        database = db
+
+class Price(Model):
+    priceID = AutoField()
+    flightKey = ForeignKeyField(Flight, to_field='flightKey', on_delete='CASCADE', on_update='CASCADE')
+    scrapeDate = DateField()
+    availableSeats = IntegerField()
+    adultPrice = FloatField()
+
+    class Meta:
+        database = db
+
 
 # create the tables if they don't exist
 db.create_tables([Flight, Price, Airport, Airline])
