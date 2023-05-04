@@ -33,7 +33,7 @@ country VARCHAR(50)
 );
 
 CREATE TABLE IF NOT EXISTS DimDate (
-    dateID INT UNSIGNED,
+    dateID INT,
     fullDate DATE,
     dayOfMonth INT,
     dayOfYear INT,
