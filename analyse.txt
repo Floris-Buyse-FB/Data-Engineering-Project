@@ -1,14 +1,14 @@
 (1) Welke vliegtuigmaatschappij is gemiddeld de goedkoopste / de duurste?   (Pandas)
-(2) Hoe vaak vliegt elke vliegtuigmaatschappij per week naar elk van de bestemmingen? (PowerBI)
+(2) Hoe vaak vliegt elke vliegtuigmaatschappij per week naar elk van de bestemmingen? (PowerBI) OK
 (3) Welke vliegtuigmaatschappij biedt de snelste vlucht aan naar een bepaalde bestemming?  (PowerBI)
-(4) Welke vliegtuigmaatschappij biedt de goedkoopste vlucht aan naar een bepaalde bestemming? (PowerBI)
-(5) Welke vliegtuigmaatschappij biedt een vlucht aan zonder tussenstops, met maximum 1 tussenstop, ...? (PowerBI)
-(6) Rapport over prijsevolutie en beschikbaarheidsevolutie doorheen de tijd. (PowerBI)
-(7) Is er een correlatie met de vakantiebestemmingen: zijn bepaalde bestemmingen significant duurder dan andere bestemmingen (PowerBI)
+(4) Welke vliegtuigmaatschappij biedt de goedkoopste vlucht aan naar een bepaalde bestemming? (PowerBI) OK
+(5) Welke vliegtuigmaatschappij biedt een vlucht aan zonder tussenstops, met maximum 1 tussenstop, ...? (PowerBI) OK
+(6) Rapport over prijsevolutie en beschikbaarheidsevolutie doorheen de tijd. (PowerBI) OK?????
+(7) Is er een correlatie met de vakantiebestemmingen: zijn bepaalde bestemmingen significant duurder dan andere bestemmingen (PowerBI) OK
 (8) Zijn de prijzen gerelateerd aan vakantieperiodes hier of ter plaatse? (Pandas)
 (9) Kan je de prijsstrategie afleiden? (Invloed van aantal dagen voor vertrek, invloed van beschikbaarheid) (Pandas)
-(10) Is er een link tussen prijs en afstand (en duration)? Bijvoorbeeld Tenerife is anderhalf uur verder dan Alicante. (PowerBI)
-(11) Is er een link tussen prijs en land? Zijn sommige landen opvallend duurder (en kan dit niet verklaard worden door de extra afstand) (PowerBI)
+(10) Is er een link tussen prijs en afstand (en duration)? Bijvoorbeeld Tenerife is anderhalf uur verder dan Alicante. (PowerBI) OK
+(11) Is er een link tussen prijs en land? Zijn sommige landen opvallend duurder (en kan dit niet verklaard worden door de extra afstand) (PowerBI) OK
 (12) Hoeveel dagen voor vertrek is een vlucht volgeboekt? Zijn er bestemmingen waarbij de vluchten bijna volgeboekt zijn? (PowerBI)
 (13) Hoeveel procent van de vluchten zijn volgeboekt? / Hoeveel plaatsen zijn er nog vrij 5 dagen voor vertrek. (PowerBI)
 (14) Plot het verband tussen de prijs en het aantal dagen voor vertrek voor Ryanair voor de afgelopen maand (Pandas)

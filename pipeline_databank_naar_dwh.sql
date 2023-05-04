@@ -116,7 +116,6 @@ WHERE NOT EXISTS (
 
 
 
-USE airfaresdwh;
 -- ints toevoegen in datawarehouse => auto-increment (allemaal), behalve voor dimdate van date cijfer maken (code zoeken)!!!!!!!!!!!!
 INSERT INTO FactFlights(
 scrapeDateID,
@@ -141,9 +140,9 @@ oltp_price.availableSeats,
 oltp_price.adultPrice
 
 FROM airfares.flight oltp_flight INNER JOIN airfaresdwh.dimflight dwh_flight ON oltp_flight.flightKey = dwh_flight.flightKey
-inner join airfaresdwh.dimairline dwh_airline ON oltp_flight.carrierCode = dwh_airline.carrierCode 
-INNER JOIN airfaresdwh.dimAirport dwh_airport ON oltp_flight.depAirportCode = dwh_airport.airportCode
-INNER JOIN airfaresdwh.dimAirport dwh_airport2 ON oltp_flight.arrAirportCode = dwh_airport2.airportCode
+inner join airfaresdwh.dimairline dwh_airline ON oltp_flight.carrierCode_id = dwh_airline.carrierCode 
+INNER JOIN airfaresdwh.dimAirport dwh_airport ON oltp_flight.depAirportCode_id = dwh_airport.airportCode
+INNER JOIN airfaresdwh.dimAirport dwh_airport2 ON oltp_flight.arrAirportCode_id = dwh_airport2.airportCode
 INNER JOIN airfares.price oltp_price ON oltp_flight.flightKey = oltp_price.flightKey_id 
 INNER JOIN airfaresdwh.dimDate dwh_date ON oltp_price.scrapeDate = dwh_date.fullDate
 INNER JOIN airfaresdwh.dimDate dwh_date2 ON oltp_flight.departureDate = dwh_date2.fullDate

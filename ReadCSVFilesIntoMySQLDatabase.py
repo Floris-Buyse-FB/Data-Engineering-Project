@@ -4,7 +4,7 @@ import csv
 from peewee import *
 
 # create the database connection
-db = MySQLDatabase('airfares', user='root', password='toor', host='localhost', autocommit=True)
+db = MySQLDatabase('airfares', user='root', password='root', host='localhost', autocommit=True)
 
 # define the models
 class Airport(Model):
