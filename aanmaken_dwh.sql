@@ -4,7 +4,8 @@ use airfaresDWH;
 
 
 CREATE TABLE DimFlight (
-  flightID INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
+flightKey VARCHAR(255),
+	flightID INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
   flightNumber VARCHAR(50),
   departureDate DATE,
   arrivalDate DATE,
@@ -51,25 +52,22 @@ CREATE TABLE IF NOT EXISTS DimDate (
 
 
 CREATE TABLE FactFlights (
-  flightKey VARCHAR(255),
-  flightNumber VARCHAR(50),
-  carrierCode VARCHAR(50),
-  scrapeDate DATE,
-  depAirportCode VARCHAR(50),
-  arrAirportCode VARCHAR(50),
+	factID INT auto_increment,
+  scrapeDateID INT,
+   depAirportID INT,
+  arrAirportID INT,
   flightID INT,
-  departureDate DATE,
-  arrivalDate DATE,
-  totalNumberOfStops INT,
+    carrierID INT,
+  departureDateID INT,
+  arrivalDateID int,
   availableSeats INT,
   adultPrice FLOAT,
-  carrierID INT,
-  airportID INT,
-  dateID INT UNSIGNED,
-  PRIMARY KEY (flightKey),
+  PRIMARY KEY (factID),
   FOREIGN KEY (flightID) REFERENCES DimFlight(flightID),
   FOREIGN KEY (carrierID) REFERENCES DimAirline(carrierID),
-  FOREIGN KEY (airportID) REFERENCES DimAirport(airportID),
-  FOREIGN KEY (dateID) REFERENCES DimDate(dateID)
-  
+  FOREIGN KEY (depAirportID) REFERENCES DimAirport(airportID),
+    FOREIGN KEY (arrAirportID) REFERENCES DimAirport(airportID),
+  FOREIGN KEY (departureDateID) REFERENCES DimDate(dateID),
+    FOREIGN KEY (arrivalDateID) REFERENCES DimDate(dateID),
+      FOREIGN KEY (scrapeDateID) REFERENCES DimDate(dateID)
 );
