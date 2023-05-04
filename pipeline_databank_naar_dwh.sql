@@ -22,7 +22,7 @@ BEGIN
     WHILE v_full_date < p_end_date DO
 
         INSERT INTO DimDate (
-			dateID,
+			      dateID,
             fullDate ,
             dayOfMonth ,
             dayOfYear ,
@@ -84,7 +84,7 @@ SELECT DISTINCT airportCode, airportName, city, country FROM airfares.Airport WH
 -- Insert new flights into the DimFlight table
 INSERT INTO DimFlight (flightKey, flightNumber, departureDate, arrivalDate, departureTime, arrivalTime, journeyDuration, totalNumberOfStops, startDate, endDate)
 SELECT f.flightKey, f.flightNumber, f.departureDate, f.arrivalDate, f.departureTime, f.arrivalTime, f.journeyDuration, f.totalNumberOfStops, '2023-01-01', NULL
-FROM airfares.Flight f
+FROM airfares.flight f
 WHERE NOT EXISTS (
   SELECT 1 FROM DimFlight df WHERE f.flightKey = df.flightKey
 );
@@ -95,7 +95,7 @@ DROP TABLE IF EXISTS TempFlightChanges;
 -- Use a temporary table to hold the flights that have changed
 CREATE TEMPORARY TABLE TempFlightChanges AS
 SELECT f.flightKey, df.flightID, f.flightNumber, f.departureDate, f.arrivalDate, f.departureTime, f.arrivalTime, f.journeyDuration, f.totalNumberOfStops
-FROM airfares.Flight f
+FROM airfares.flight f
 LEFT JOIN airfaresdwh.DimFlight df ON f.flightKey = df.flightKey
 WHERE df.totalNumberOfStops <> f.totalNumberOfStops OR df.departureTime <> f.departureTime OR df.arrivalTime <> f.arrivalTime OR df.journeyDuration <> f.journeyDuration;
 
@@ -108,13 +108,11 @@ WHERE df.endDate IS NULL;
 
 -- Add extra records to DimFlight with most recent info of the flights
 INSERT INTO DimFlight (flightKey, flightNumber, departureDate, arrivalDate, departureTime, arrivalTime, journeyDuration, totalNumberOfStops, startDate, endDate)
-SELECT f.flightKey, f.flightNumber, f.departureDate, f.arrivalDate, f.departureTime, f.arrivalTime, f.journeyDuration, f.totalNumberOfStops, NOW(), NULL
+SELECT tf.flightKey, tf.flightNumber, tf.departureDate, tf.arrivalDate, tf.departureTime, tf.arrivalTime, tf.journeyDuration, tf.totalNumberOfStops, NOW(), NULL
 FROM TempFlightChanges tf
 WHERE NOT EXISTS (
-  SELECT 1 FROM DimFlight df WHERE f.flightKey = tf.flightKey
-)
-
-
+  SELECT 1 FROM DimFlight df WHERE df.flightKey = tf.flightKey
+);
 
 -- ints toevoegen in datawarehouse => auto-increment (allemaal), behalve voor dimdate van date cijfer maken (code zoeken)!!!!!!!!!!!!
 INSERT INTO FactFlights(
@@ -131,11 +129,11 @@ adultPrice
 SELECT DISTINCT
 dwh_date.dateID,
 dwh_airport.airportID,
-dwh_airport.airportID,
+dwh_airport2.airportID,
 dwh_flight.flightID, 
 dwh_airline.carrierID,
-dwh_date.dateID,
-dwh_date.dateID,
+dwh_date2.dateID,
+dwh_date3.dateID,
 oltp_price.availableSeats,
 oltp_price.adultPrice
 
@@ -149,17 +147,14 @@ INNER JOIN airfaresdwh.dimDate dwh_date2 ON oltp_flight.departureDate = dwh_date
 INNER JOIN airfaresdwh.dimDate dwh_date3 ON oltp_flight.arrivalDate = dwh_date3.fullDate
 
 WHERE 
-
-
+(
 /* only add new lines + make sure it runs from an empty FactFlights table */
 oltp_price.priceID > (SELECT IFNULL (MAX(factID),0) from FactFlights)
 AND
 /* Slowly Changing Dimension DimFlight */
-oltp_price.scrapeDate >= dwh_flight.startDate and (dwh_flight.endDate is null or oltp_price.scrapeDate <= dwh_flight.endDate) 
-
-
-
-
+oltp_price.scrapeDate >= dwh_flight.startDate and (dwh_flight.endDate is null or oltp_price.scrapeDate <= dwh_flight.endDate)
+);
 
 -- drop procedure
 DROP PROCEDURE IF EXISTS DimDateBuild;
+

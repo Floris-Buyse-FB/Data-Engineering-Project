@@ -2,7 +2,6 @@ CREATE DATABASE airfaresDWH;
 
 use airfaresDWH;
 
-
 CREATE TABLE DimFlight (
 flightKey VARCHAR(255),
 	flightID INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
@@ -16,7 +15,6 @@ flightKey VARCHAR(255),
   startDate DATE,
   endDate DATE
 );
-
 
 CREATE TABLE DimAirline (
 carrierID INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
@@ -47,17 +45,13 @@ CREATE TABLE IF NOT EXISTS DimDate (
     PRIMARY KEY (dateID)
 ) ENGINE=InnoDB AUTO_INCREMENT=1000;
 
-
-
-
-
 CREATE TABLE FactFlights (
 	factID INT auto_increment,
   scrapeDateID INT,
-   depAirportID INT,
+  depAirportID INT,
   arrAirportID INT,
   flightID INT,
-    carrierID INT,
+  carrierID INT,
   departureDateID INT,
   arrivalDateID int,
   availableSeats INT,
@@ -66,8 +60,8 @@ CREATE TABLE FactFlights (
   FOREIGN KEY (flightID) REFERENCES DimFlight(flightID),
   FOREIGN KEY (carrierID) REFERENCES DimAirline(carrierID),
   FOREIGN KEY (depAirportID) REFERENCES DimAirport(airportID),
-    FOREIGN KEY (arrAirportID) REFERENCES DimAirport(airportID),
+  FOREIGN KEY (arrAirportID) REFERENCES DimAirport(airportID),
   FOREIGN KEY (departureDateID) REFERENCES DimDate(dateID),
-    FOREIGN KEY (arrivalDateID) REFERENCES DimDate(dateID),
-      FOREIGN KEY (scrapeDateID) REFERENCES DimDate(dateID)
+  FOREIGN KEY (arrivalDateID) REFERENCES DimDate(dateID),
+  FOREIGN KEY (scrapeDateID) REFERENCES DimDate(dateID)
 );
