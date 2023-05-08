@@ -50,46 +50,6 @@ class Price(Model):
     class Meta:
         database = db
 
-
-# create the tables if they don't exist
-db.create_tables([Flight, Price, Airport, Airline])
-
-try:
-    # insert the airport records
-    with open('./data/csv2/airport.csv', 'r') as csvfile:
-        reader = csv.reader(csvfile)
-        for row in reader:
-            if row == []:
-                continue
-            else:
-                if not Airport.select().where(Airport.airportCode == row[0]).exists():
-                    with db.atomic():
-                        Airport.create(
-                            airportCode=row[0],
-                            airportName=row[1],
-                            city=row[2],
-                            country=row[3]
-                        )
-                    db.commit()
-
-    # insert the airline records
-    with open('./data/csv2/airline.csv', 'r') as csvfile:
-        reader = csv.reader(csvfile)
-        for row in reader:
-            if row == []:
-                continue
-            else:
-                if not Airline.select().where(Airline.carrierCode == row[0]).exists():
-                    with db.atomic():
-                        Airline.create(
-                            carrierCode=row[0],
-                            carrierName=row[1]
-                        )
-                    db.commit()
-except Exception as e:
-    print("Error while connecting to MySQL", e)
-
-
 def insert_data(filename):
     with open(filename, 'r') as csvfile:
         reader = csv.reader(csvfile)
@@ -146,42 +106,75 @@ def insert_data(filename):
                             adultPrice=row[13])
                     db.commit()
 
-def pipeline():
-    # Connect to the database
-    conn = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="root",
-        database="airfaresdwh"
-    )
+# def pipeline():
+#     # Connect to the database
+#     conn = mysql.connector.connect(
+#         host="localhost",
+#         user="root",
+#         password="root",
+#         database="airfaresdwh"
+#     )
 
-    # Open and read the SQL file
-    with open('./pipeline_databank_naar_dwh.sql', 'r') as f:
-        print("ok")
-        cursor = conn.cursor().replace('delimiter //', '')
-        # Execute each statement one by one
-        for statement in f.read().split(';'):
-            cursor.execute(statement)
+#     cursor = conn.cursor()
 
-    # Commit the changes
-    conn.commit()
+#     # Open and read the SQL file
+#     with open('./pipeline_databank_naar_dwh.sql', 'r') as f:
+#         sql_file = f.read()
+#     cursor.execute(sql_file)
 
-    # Close the connection
-    conn.close()
+#     # Commit the changes
+#     conn.commit()
 
-def clear_oltp():
+#     # Close the connection
+#     conn.close()
+
+def create_oltp():
     db.drop_tables([Flight, Price])
     db.create_tables([Flight, Price])
 
+    try:
+        # insert the airport records
+        with open('./data/csv2/airport.csv', 'r') as csvfile:
+            reader = csv.reader(csvfile)
+            for row in reader:
+                if row == []:
+                    continue
+                else:
+                    if not Airport.select().where(Airport.airportCode == row[0]).exists():
+                        with db.atomic():
+                            Airport.create(
+                                airportCode=row[0],
+                                airportName=row[1],
+                                city=row[2],
+                                country=row[3]
+                            )
+                        db.commit()
+
+        # insert the airline records
+        with open('./data/csv2/airline.csv', 'r') as csvfile:
+            reader = csv.reader(csvfile)
+            for row in reader:
+                if row == []:
+                    continue
+                else:
+                    if not Airline.select().where(Airline.carrierCode == row[0]).exists():
+                        with db.atomic():
+                            Airline.create(
+                                carrierCode=row[0],
+                                carrierName=row[1]
+                            )
+                        db.commit()
+    except Exception as e:
+        print("Error while connecting to MySQL", e)
+
+
 try:
-    clear_oltp()
+    create_oltp()
     directory = './data/csv2/files'
     for filename in os.listdir(directory):
         if filename.endswith('.csv'):
             insert_data(os.path.join(directory, filename))
-            print("Inserted data from file: " + filename)
-            pipeline()
-            clear_oltp()
+            print(filename + ' inserted')
                 
 except Exception as e:
     print("Error while connecting to MySQL", e)

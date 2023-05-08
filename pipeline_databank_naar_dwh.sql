@@ -108,10 +108,10 @@ WHERE df.endDate IS NULL;
 
 -- Add extra records to DimFlight with most recent info of the flights
 INSERT INTO DimFlight (flightKey, flightNumber, departureDate, arrivalDate, departureTime, arrivalTime, journeyDuration, totalNumberOfStops, startDate, endDate)
-SELECT tf.flightKey, tf.flightNumber, tf.departureDate, tf.arrivalDate, tf.departureTime, tf.arrivalTime, tf.journeyDuration, tf.totalNumberOfStops, NOW(), NULL
-FROM TempFlightChanges tf
+SELECT f.flightKey, f.flightNumber, f.departureDate, f.arrivalDate, f.departureTime, f.arrivalTime, f.journeyDuration, f.totalNumberOfStops, NOW(), NULL
+FROM airfares.flight f
 WHERE NOT EXISTS (
-  SELECT 1 FROM DimFlight df WHERE df.flightKey = tf.flightKey
+  SELECT 1 FROM DimFlight df WHERE f.flightKey = df.flightKey
 );
 
 -- ints toevoegen in datawarehouse => auto-increment (allemaal), behalve voor dimdate van date cijfer maken (code zoeken)!!!!!!!!!!!!
