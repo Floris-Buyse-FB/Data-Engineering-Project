@@ -32,7 +32,11 @@ BEGIN
             monthName,
             year,
             isItWeekend,
-            isItVacationday
+            isItVacationday,
+            week_of_year,
+            quarter,
+            previous_day,
+            next_day            
         ) VALUES (
 			UNIX_TIMESTAMP(v_full_date),
             v_full_date,
@@ -50,7 +54,12 @@ BEGIN
 				(MONTH(v_full_date) IN (7,8)), -- July and August
 				1, -- is a vacation day
 				0 -- not a vacation day
-        ));
+            ),
+            WEEKOFYEAR(v_full_date),
+            QUARTER(v_full_date),
+            DATE_ADD(v_full_date, INTERVAL -1 DAY),
+            DATE_ADD(v_full_date, INTERVAL 1 DAY)
+        );
 
         SET v_full_date = DATE_ADD(v_full_date, INTERVAL 1 DAY);
     END WHILE;

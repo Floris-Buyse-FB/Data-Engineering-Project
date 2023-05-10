@@ -42,8 +42,15 @@ CREATE TABLE IF NOT EXISTS DimDate (
     year INT,
     isItWeekend INT,
     isItVacationDay INT,
+    week_of_year     CHAR(2),
+    quarter  INT,
+  	previous_day     date,
+	  next_day         date,
     PRIMARY KEY (dateID)
 ) ENGINE=InnoDB AUTO_INCREMENT=1000;
+
+
+
 
 CREATE TABLE FactFlights (
 	factID INT auto_increment,
