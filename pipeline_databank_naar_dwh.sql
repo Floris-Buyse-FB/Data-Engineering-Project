@@ -94,25 +94,23 @@ DROP TABLE IF EXISTS TempFlightChanges;
 
 -- Use a temporary table to hold the flights that have changed
 CREATE TEMPORARY TABLE TempFlightChanges AS
-SELECT f.flightKey, df.flightID, f.flightNumber, f.departureDate, f.arrivalDate, f.departureTime, f.arrivalTime, f.journeyDuration, f.totalNumberOfStops
+SELECT f.flightKey, f.flightNumber, f.departureDate, f.arrivalDate, f.departureTime, f.arrivalTime, f.journeyDuration, f.totalNumberOfStops
 FROM airfares.flight f
 LEFT JOIN airfaresdwh.DimFlight df ON f.flightKey = df.flightKey
-WHERE df.totalNumberOfStops <> f.totalNumberOfStops OR df.departureTime <> f.departureTime OR df.arrivalTime <> f.arrivalTime OR df.journeyDuration <> f.journeyDuration;
+WHERE (df.totalNumberOfStops <> f.totalNumberOfStops OR df.departureTime <> f.departureTime OR df.arrivalTime <> f.arrivalTime OR df.journeyDuration <> f.journeyDuration) AND (endDate is null);
 
 
 -- Set the end date in DimFlight for the flights that have changed, on yesterday
 UPDATE DimFlight df
-LEFT JOIN TempFlightChanges tfc ON df.flightKey = tfc.flightKey
 SET df.endDate = DATE_SUB(CURDATE(), INTERVAL 1 DAY)
-WHERE df.endDate IS NULL;
+WHERE flightKey IN (SELECT flightKey FROM TempFlightChanges);
 
 -- Add extra records to DimFlight with most recent info of the flights
 INSERT INTO DimFlight (flightKey, flightNumber, departureDate, arrivalDate, departureTime, arrivalTime, journeyDuration, totalNumberOfStops, startDate, endDate)
-SELECT f.flightKey, f.flightNumber, f.departureDate, f.arrivalDate, f.departureTime, f.arrivalTime, f.journeyDuration, f.totalNumberOfStops, NOW(), NULL
-FROM airfares.flight f
-WHERE NOT EXISTS (
-  SELECT 1 FROM DimFlight df WHERE f.flightKey = df.flightKey
-);
+SELECT *, curdate(), NULL
+FROM TempFlightChanges;
+
+DROP TABLE IF EXISTS TempFlightChanges;
 
 -- ints toevoegen in datawarehouse => auto-increment (allemaal), behalve voor dimdate van date cijfer maken (code zoeken)!!!!!!!!!!!!
 INSERT INTO FactFlights(
@@ -137,11 +135,12 @@ dwh_date3.dateID,
 oltp_price.availableSeats,
 oltp_price.adultPrice
 
-FROM airfares.flight oltp_flight INNER JOIN airfaresdwh.dimflight dwh_flight ON oltp_flight.flightKey = dwh_flight.flightKey
+FROM airfares.flight oltp_flight 
+INNER JOIN airfaresdwh.dimflight dwh_flight ON oltp_flight.flightKey = dwh_flight.flightKey
+INNER JOIN airfares.price oltp_price ON oltp_flight.flightKey = oltp_price.flightKey_id 
 inner join airfaresdwh.dimairline dwh_airline ON oltp_flight.carrierCode_id = dwh_airline.carrierCode 
 INNER JOIN airfaresdwh.dimAirport dwh_airport ON oltp_flight.depAirportCode_id = dwh_airport.airportCode
 INNER JOIN airfaresdwh.dimAirport dwh_airport2 ON oltp_flight.arrAirportCode_id = dwh_airport2.airportCode
-INNER JOIN airfares.price oltp_price ON oltp_flight.flightKey = oltp_price.flightKey_id 
 INNER JOIN airfaresdwh.dimDate dwh_date ON oltp_price.scrapeDate = dwh_date.fullDate
 INNER JOIN airfaresdwh.dimDate dwh_date2 ON oltp_flight.departureDate = dwh_date2.fullDate
 INNER JOIN airfaresdwh.dimDate dwh_date3 ON oltp_flight.arrivalDate = dwh_date3.fullDate
@@ -152,7 +151,8 @@ WHERE
 oltp_price.priceID > (SELECT IFNULL (MAX(factID),0) from FactFlights)
 AND
 /* Slowly Changing Dimension DimFlight */
-oltp_price.scrapeDate >= dwh_flight.startDate and (dwh_flight.endDate is null or oltp_price.scrapeDate <= dwh_flight.endDate)
+oltp_price.scrapeDate >= dwh_flight.startDate 
+and (dwh_flight.endDate IS NULL OR oltp_price.scrapeDate <= dwh_flight.endDate)
 );
 
 -- drop procedure
