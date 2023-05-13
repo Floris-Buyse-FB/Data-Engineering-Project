@@ -156,9 +156,9 @@ INNER JOIN airfaresdwh.dimDate dwh_date3 ON oltp_flight.arrivalDate = dwh_date3.
 
 WHERE 
 (
-/* only add new lines + make sure it runs from an empty FactFlights table */
-oltp_price.priceID > (SELECT IFNULL (MAX(factID),0) from FactFlights)
-AND
+-- /* only add new lines + make sure it runs from an empty FactFlights table */
+-- oltp_price.priceID > (SELECT IFNULL (MAX(factID),0) from FactFlights)
+-- AND
 /* Slowly Changing Dimension DimFlight */
 oltp_price.scrapeDate >= dwh_flight.startDate 
 and (dwh_flight.endDate IS NULL OR oltp_price.scrapeDate <= dwh_flight.endDate)
