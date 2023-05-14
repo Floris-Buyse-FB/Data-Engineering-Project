@@ -15,14 +15,7 @@ def convert_to_date(date_string):
     return date_string if date_string in ["scrapeDate", "departureDate", "arrivalDate"] else datetime.strptime(date_string, '%Y-%m-%d').date()
 
 def convert_to_time(time_string):
-    return time_string.split('+')[0]
-
-# def convert_to_duration(duration_string):
-#     if duration_string == "duration":
-#         return duration_string
-#     else:
-#         hours, minutes = duration_string.split(':')
-#         return int(hours) * 60 + int(minutes)     
+    return time_string.split('+')[0] 
 
 def subtract_times(arr, dep):
     datetime1 = datetime.strptime(arr, '%H:%M')
@@ -116,7 +109,6 @@ def ryanair_insertion():
         reader = csv.reader(file)
         next(reader)
         for row in reader:
-            #scrapeDate,flightKey,flightNumber,departureAirportCode,departureAirportName,arrivalAirportCode,arrivalAirportName,departureDate,departureTime,arrivalDate,arrivalTime,carrierCode,carrierName,duration_formatted,price,originalPrice,hasDiscount,hasPromoDiscount,discountAmount,fareType,availableSeats
             scrapeDate = convert_to_date(row[0])
             flightKey = row[1]
             flightNumber = row[2]
@@ -187,7 +179,6 @@ def transavia_insertion():
         reader = csv.reader(file)
         next(reader)
         for row in reader:
-            #scrapeDate,flightKey,departAirport,arrivalAirport,marketingAirline,carrierName,departureDate,departureTime,arrivalDate,arrivalTime,flightNumber,totalPrice,baseFare,taxSurcharge
             scrapeDate = convert_to_date(row[0])
             flightKey = row[1]
             departureAirportCode = row[2]
@@ -258,6 +249,14 @@ def start():
     transavia_insertion()
 
 start()
+
+
+# def convert_to_duration(duration_string):
+#     if duration_string == "duration":
+#         return duration_string
+#     else:
+#         hours, minutes = duration_string.split(':')
+#         return int(hours) * 60 + int(minutes)    
 
 # def bruair_insertion():
 #     with open('/home/vicuser/Data-Engineering-Project/data/bruair/BruAirScrapeData_2023-03-23.csv') as file:
