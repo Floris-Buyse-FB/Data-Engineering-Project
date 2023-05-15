@@ -1,3 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body style="height: 100%">
+  <div style="height: 100vh; display: flex; flex-direction: column; justify-content: space-between; align-items: center; color: black; text-align: center;">
+    <div>
+        <img src="./images/voorblad_hogent_img.png">
+        <p style="font-size: 24px;">Faculteit IT en digitale innovatie</p>
+    </div>
+    <div>
+      <h1 style="font-size: 48px; margin-bottom: 20px;">Analysereport<br>Data-<br>Engineering<br>Project</h1>
+    </div>
+    <div>
+      <p style="font-size: 18px;">Groepsnummer 10<br>Begeleidende lector: Patrick Van Renterghem<br>Groepsleden: Floris Buyse, Emma De Koster<br>Max Milan, Marlon Engels<br>Datum: 11/05/2023</p>
+    </div>
+  </div>
+</body>
+</html>
+
+
 # Vraag 1: welke vliegtuigmaatschappij is gemiddeld de goedkoopste/duurste?
 
 <img src='./images/Picture1.png'>
