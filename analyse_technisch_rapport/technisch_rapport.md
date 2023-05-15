@@ -26,9 +26,7 @@
 ### Versie gemaakt met pandas
 <img src="../images/Picture2.png">
 
-```
 Deze code was vrij eenvoudig. We hebben een Dataframe gemaakt van de factFlights-tabel en vervolgens gegevens geselecteerd op basis van de carrierID. In dit geval hebben we carrierID 1 voor Ryanair, 2 voor TUIfly en 3 voor Transavia gebruikt. Vervolgens hebben we de adultPrice opgehaald en met behulp van de ingebouwde pandas-functie mean() het gemiddelde van de prijzen berekend. Hieronder vind je de code die we hebben gebruikt om het gemiddelde van de prijzen voor Ryanair te verkrijgen (code voor andere maatschappijen is volledig hetzelfde behalve de carrierID). Daarna hebben we de drie gemiddelde prijzen in een horizontale staafdiagram geplaatst.
-```
 
 ## Code:
 
@@ -90,6 +88,13 @@ plt.xlabel('Gemiddlede prijs')
 
 <img src="../images/Picture11.png">
 
+Voor deze vraag op te lossen in Power BI hebben we twee extra kolommen toegevoegd aan factflights. De datum voor scrape date en departure date werden reeds opgeslagen maar slechts als unix time. We hebben deze omgezet naar de normale tijd DD/MM/YYYY.
+
+Volgende stukken werden gebruikt om de kolommen te creëren:
+`departureDate = DATE(1970, 1, 1) + ('airfaresdwh factflights'[departureDateID] / 86400) + TIME(0, 0, 0) + TIME(2, 0, 0)`
+
+`scrapeDate = DATE(1970, 1, 1) + ('airfaresdwh factflights'[scrapeDateID] / 86400) + TIME(0, 0, 0) + TIME(2, 0, 0)`
+
 ---
 
 
@@ -104,11 +109,9 @@ plt.xlabel('Gemiddlede prijs')
 
 <img src="../images/Picture13.png">
 
-```
 Eerst wordt de dimDate-tabel geconverteerd naar een dataframe (niet zichtbaar in de onderstaande code). Vervolgens wordt de kolom 'fullDate' omgezet naar het Pandas datetime-formaat. Alle gegevens na de 184e index worden verwijderd, omdat ze buiten de scope van de opdracht vallen (data na 1 oktober). Het dataframe van factFlights wordt samengevoegd met het dataframe van dimDate op basis van de kolommen 'departureDateID' en 'dateID'.
 
 Voor het plotten van de grafiek worden de resulterende gegevens gebruikt. Om de vakantieperiodes zichtbaar te maken, wordt een for-loop gebruikt om door alle data te itereren. Telkens wanneer de kolom 'isItVacationDay' gelijk is aan 1, wordt een extra verticale rode stippenlijn toegevoegd aan de grafiek.
-```
 
 ## Code:
 
@@ -146,10 +149,14 @@ plt.show()
 
 <img src="../images/Picture14.png">
 
+Voor deze vraag in Power BI, hebben we ook vorige twee kolommen 'ScrapeDate' en 'DepartureDate' ([aangemaakt in vraag 6](#vraag-6-rapport-over-prijsevolutie-en-beschikbaarheidsevolutie-doorheen-de-tijd-beperkt-tot-alicante-en-21-april-2023)) als normale vorm nodig. Ook hebben we een andere extra kolom toegevoegd nl. DaysBeforeDeparture.
+
+Het volgende stuk werd gebruikt om de kolom te maken: 
+`daysBeforeDeparture = DATEDIFF('airfaresdwh factflights'[scrapeDate].[Date], 'airfaresdwh factflights'[departureDate].[Date], DAY)`
+
 ### Voorbeeld analyse in pandas Ryanair naar alicante: 
 <img src="../images/Picture15.png">
 
-```
 Hier beginnen we ook met het droppen van Datum data na index 184 en het mergen van factFlights en dimDate (zoals bij vraag 8). Vervolgens zetten we de kolommen 'scrapeDateID' en 'departureDateID' om naar "human-readable" datums (stonden origineel in UNIX tijd).
 
 Daarna maken we een nieuwe kolom aan: 'daysBeforeDeparture'. Dit verwezenlijken we door de 'fullDate' af te trekken van de 'scrapeDateID'.
@@ -158,11 +165,10 @@ Hierna mergen we het Dataframe bestaande uit dimDate en factFlights met het Data
 
 Als laatste splitsen we dit Dataframe (genaamd df_total) op in df_ryanair, df_tui en df_transavia. 
 
-```
-``df_total.head(5) geeft het volgende weer:``
+df_total.head(5) geeft het volgende weer:
+
 <img src="../images/vraag_9_df_total.png">
 
-```
 De resterende code wordt gebruikt om een subplot-grid van grafieken aan te maken. Het aantal rijen in het grid wordt bepaald door het aantal unieke waarden in de kolom 'airportCode' van het DataFrame df_ryanair. Het grid heeft 2 kolommen.
 
 Vervolgens wordt er een lus uitgevoerd waarin de code voor elke unieke luchthavencode wordt herhaald. Binnen de lus wordt een subset van het DataFrame gemaakt voor de specifieke luchthavencode en alleen de gegevens die zich binnen 30 dagen voor vertrek bevinden.
@@ -170,7 +176,6 @@ Vervolgens wordt er een lus uitgevoerd waarin de code voor elke unieke luchthave
 De subset wordt gebruikt om de gemiddelde prijs ('meanPrice') en het gemiddelde aantal beschikbare stoelen ('meanSeats') te berekenen. Duplicaten worden verwijderd op basis van de kolom 'daysBeforeDeparture'.
 
 De grafieken worden getekend op respectieve assen (ax1 en ax2) in het subplot-grid. Het aantal assen is afhankelijk van het aantal unieke luchthavencodes. Als er slechts één unieke luchthavencode is, worden de grafieken getekend op axs[0] en axs[1].
-```
 
 ## Code:
 
@@ -262,10 +267,8 @@ plt.show()
 
 <img src="../images/Picture20.png">
 
-```
 Om deze vraag te beantwoorden, hebben we eerst alle rijen uit de tabel ‘factFlights’ geselecteerd waarbij er geen beschikbare plaatsen meer waren. Vervolgens hebben we deze rijen gegroepeerd op vluchtnummer en hebben we alleen de eerste datum genomen die voorkomt.
 Daarna hebben we berekend hoeveel dagen er nog over zijn tot aan de vertrekdatum. Bij deze stap hebben we voor elke bestemming het gemiddeld aantal dagen tot de vertrekdatum berekend en vervolgens een staafdiagram van gemaakt.
-```
 
 ## Code:
 
@@ -292,11 +295,9 @@ plt.show()
 
 <img src="../images/Picture21.png">
 
-```
 Het doel van deze grafiek is om de bestemming te identificeren waar je de meeste kans hebt om last-minute een ticket te bemachtigen.
 Om dit te bereiken, hebben we eerst alle rijen uit de tabel ‘factFlights’ geselecteerd waarbij de scrape datum vijf dagen voor de vertrekdatum lag. Vervolgens hebben we deze rijen gegroepeerd op bestemming en het gemiddelde aantal beschikbare plaatsen berekend.
 Met behulp van deze gegevens hebben we een staafdiagram gemaakt om de resultaten visueel weer te geven.
-```
 
 ## Code:
 
@@ -325,7 +326,6 @@ plt.show()
 
 <img src="../images/Picture22.png">
 
-```
 Het doel van deze grafiek is om het optimale moment voor het boeken van een Ryanair-vlucht te bepalen 30 dagen voor vertrek. 
 
 Om dit te bereiken, beginnen we met het selecteren van alle rijen uit de tabel 'factFlights' waarbij de maatschappij Ryanair is en de scrape datum binnen 30 dagen voor de vertrekdatum van de vlucht valt. 
@@ -333,7 +333,6 @@ Om dit te bereiken, beginnen we met het selecteren van alle rijen uit de tabel '
 Vervolgens groeperen we deze rijen op basis van het aantal dagen voor vertrek, waardoor we 30 groepen krijgen, en berekenen we het gemiddelde van de prijzen. 
 
 Met behulp van deze gegevens stellen we een grafiek op om de informatie visueel weer te geven. 
-```
 
 ## Code:
 
@@ -365,7 +364,6 @@ plt.show()
 
 <img src="../images/Picture23.png">
 
-```
 Het doel van deze grafiek is om een voorspelling te maken van de prijs per aantal dagen voor vertrek voor de volgende maand. 
 
 (Het begin is hetzelfde als bij vraag 9)
@@ -376,7 +374,6 @@ Daarna maken we een nieuwe kolom aan: 'daysBeforeDeparture'. Dit verwezenlijken 
 Hierna mergen we het Dataframe bestaande uit dimDate en factFlights met het Dataframe van dimAirport op basis van de kolommen 'arrAirportID' en 'airportID'. We droppen hierna alle kolommen die niet van toepassing zullen zijn voor deze vraag.
 
 We nemen alleen de data met carrierCode == 3 (Ryanair) en nemen hiervan alleen de data van de afgelopen maand. We splitsen nog verder op zodat we alleen de data hebben waarbij daysBeforeDeparture kleiner of gelijk is aan 30 en droppen nog enkele niet-gebruikte kolommen.
-```
 
 **Dit is de .info() van het resulterende Dataframe:**
 
@@ -394,27 +391,20 @@ Data columns (total 8 columns):
  7   city                 2353 non-null   object 
 dtypes: float64(1), int32(1), int64(5), object(1)
 ```
-```
+
 Zoals je hierboven kan zien is city van het Dtype 'object'. Dit moeten we omzetten zodat we LinearRegression kunnen gebruiken. Dit doen we met behulp van OneHotEncoding. Hieronder het resultaat van de OneHotEncoding:
-```
 <img src="../images/onehotencoding.png">
 
-```
 Daarna splitsen we de data op in X en y, en nog eens verder in X_train, X_test, y_train en y_test en testen we het model. Hieronder vind je de resultaten van het model.
-```
 
 **Testresultaten van het model**
 
-```
 Mean Absolute Error: 44.177281730770105
 Mean Squared Error: 3297.2652815265114
 Root Mean Squared Error: 57.421818862924496
 accuracy_score: 0.5434510123592607
-```
 
-```
 Om de prijzen van volgende maand te voorspellen doen we hetzelfde als hierboven beschreven staat, maar veranderen we het Dataframe naar de data van volgende maand (df_next_month). Na het OneHotEncoden van deze data (van de city kolom), maken we een nieuw Dataframe aan waarin we enkel de 'adultPrice', 'daysBeforeDeparture', 'predictedPrice' en 'difference' hebben zitten (genaamd df_next_month_prices). Hiermee zullen we ook de grafiek maken na het berekenen van de gemiddelde prijs, gegroepeerd per 'daysBeforeDeparture'.
-```
 
 **df_next_month_prices:**
 
@@ -540,6 +530,7 @@ plt.show()
 ### Met slicers (tweede week paasvakantie tussen 19.99 en 60 euro):
 <img src="../images/Picture25.png">
 
+Bij het gebruiken van de slicers werd er ook gebruik gemaakt van de nieuwe kolom 'DepartureDate' ([aangemaakt in vraag 6](#vraag-6-rapport-over-prijsevolutie-en-beschikbaarheidsevolutie-doorheen-de-tijd-beperkt-tot-alicante-en-21-april-2023)).
 ---
 
 
@@ -566,6 +557,8 @@ plt.show()
 
 ### Palermo:
 <img src="../images/Picture30.png">
+
+De onderste grafiek maakt gebruik van de nieuwe kolom 'ScrapeDate' ([aangemaakt in vraag 6](#vraag-6-rapport-over-prijsevolutie-en-beschikbaarheidsevolutie-doorheen-de-tijd-beperkt-tot-alicante-en-21-april-2023)) zo kunnen we de tijd mooi weergeven.
 
 ---
 
