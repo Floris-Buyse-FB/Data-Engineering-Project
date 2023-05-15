@@ -170,7 +170,7 @@ def create_oltp():
 
 try:
     create_oltp()
-    directory = './data/csv2/files'
+    directory = '../data/csv2/files'
     for filename in os.listdir(directory):
         if filename.endswith('.csv'):
             insert_data(os.path.join(directory, filename))
