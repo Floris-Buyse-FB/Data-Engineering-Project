@@ -5,7 +5,7 @@
 <body style="height: 100%">
   <div style="height: 100vh; display: flex; flex-direction: column; justify-content: space-between; align-items: center; color: black; text-align: center;">
     <div>
-        <img src="./images/voorblad_hogent_img.png">
+        <img src="../images/voorblad_hogent_img.png">
         <p style="font-size: 24px;">Faculteit IT en digitale innovatie</p>
     </div>
     <div>
@@ -21,10 +21,10 @@
 
 # Vraag 1: welke vliegtuigmaatschappij is gemiddeld de goedkoopste/duurste?
 
-<img src='./images/Picture1.png'>
+<img src='../images/Picture1.png'>
 
 ### Versie gemaakt met pandas
-<img src="./images/Picture2.png">
+<img src="../images/Picture2.png">
 
 ```
 Deze code was vrij eenvoudig. We hebben een Dataframe gemaakt van de factFlights-tabel en vervolgens gegevens geselecteerd op basis van de carrierID. In dit geval hebben we carrierID 1 voor Ryanair, 2 voor TUIfly en 3 voor Transavia gebruikt. Vervolgens hebben we de adultPrice opgehaald en met behulp van de ingebouwde pandas-functie mean() het gemiddelde van de prijzen berekend. Hieronder vind je de code die we hebben gebruikt om het gemiddelde van de prijzen voor Ryanair te verkrijgen (code voor andere maatschappijen is volledig hetzelfde behalve de carrierID). Daarna hebben we de drie gemiddelde prijzen in een horizontale staafdiagram geplaatst.
@@ -53,56 +53,56 @@ plt.xlabel('Gemiddlede prijs')
 
 # Vraag 2: Hoe vaak vliegt elke vliegtuigmaatschappij naar elk van de bestemmingen?
 
-<img src="./images/Picture3.png">
+<img src="../images/Picture3.png">
 
-<img src="./images/Picture4.png">
+<img src="../images/Picture4.png">
 
 ---
 
 # Vraag 3: Welke vliegtuigmaatschappij biedt de snelste vlucht aan naar een bepaalde bestemming?  
 
-<img src="./images/Picture5.png">
+<img src="../images/Picture5.png">
 
-<img src="./images/Picture6.png">
+<img src="../images/Picture6.png">
 
-<img src="./images/Picture7.png">
+<img src="../images/Picture7.png">
 
 ---
 
 
 # Vraag 4: Welke vliegtuigmaatschappij biedt de goedkoopste vlucht aan naar een bepaalde bestemming?
 
-<img src="./images/Picture8.png">
+<img src="../images/Picture8.png">
 
 ---
 
 
 # Vraag 5: Welke vliegtuigmaatschappij biedt een vlucht aan zonder tussenstops, met maximum 1?
 
-<img src="./images/Picture9.png">
+<img src="../images/Picture9.png">
 
-<img src="./images/Picture10.png">
+<img src="../images/Picture10.png">
 
 ---
 
 
 # Vraag 6: Rapport over prijsevolutie en beschikbaarheidsevolutie doorheen de tijd (Beperkt tot Alicante en 21 april 2023)
 
-<img src="./images/Picture11.png">
+<img src="../images/Picture11.png">
 
 ---
 
 
 # Vraag 7: Is er een correlatie met de vakantiebestemmingen: zijn bepaalde bestemmingen significant duurder dan andere bestemmingen?
 
-<img src="./images/Picture12.png">
+<img src="../images/Picture12.png">
 
 ---
 
 
 # Vraag 8: Zijn de prijzen gerelateerd aan vakantieperiodes (hier in België)?
 
-<img src="./images/Picture13.png">
+<img src="../images/Picture13.png">
 
 ```
 Eerst wordt de dimDate-tabel geconverteerd naar een dataframe (niet zichtbaar in de onderstaande code). Vervolgens wordt de kolom 'fullDate' omgezet naar het Pandas datetime-formaat. Alle gegevens na de 184e index worden verwijderd, omdat ze buiten de scope van de opdracht vallen (data na 1 oktober). Het dataframe van factFlights wordt samengevoegd met het dataframe van dimDate op basis van de kolommen 'departureDateID' en 'dateID'.
@@ -144,10 +144,10 @@ plt.show()
 
 # Vraag 9: Kan je de prijsstrategie afleiden? (Invloed van aantal dagen voor vertrek, invloed van beschikbaarheid)
 
-<img src="./images/Picture14.png">
+<img src="../images/Picture14.png">
 
 ### Voorbeeld analyse in pandas Ryanair naar alicante: 
-<img src="./images/Picture15.png">
+<img src="../images/Picture15.png">
 
 ```
 Hier beginnen we ook met het droppen van Datum data na index 184 en het mergen van factFlights en dimDate (zoals bij vraag 8). Vervolgens zetten we de kolommen 'scrapeDateID' en 'departureDateID' om naar "human-readable" datums (stonden origineel in UNIX tijd).
@@ -160,7 +160,7 @@ Als laatste splitsen we dit Dataframe (genaamd df_total) op in df_ryanair, df_tu
 
 ```
 ``df_total.head(5) geeft het volgende weer:``
-<img src="./images/vraag_9_df_total.png">
+<img src="../images/vraag_9_df_total.png">
 
 ```
 De resterende code wordt gebruikt om een subplot-grid van grafieken aan te maken. Het aantal rijen in het grid wordt bepaald door het aantal unieke waarden in de kolom 'airportCode' van het DataFrame df_ryanair. Het grid heeft 2 kolommen.
@@ -242,25 +242,25 @@ plt.show()
 
 # Vraag 10: Is er een link tussen prijs en afstand (en duration)? Bijvoorbeeld Tenerife is anderhalf uur verder dan Alicante.
 
-<img src="./images/Picture16.png">
+<img src="../images/Picture16.png">
 
-<img src="./images/Picture17.png">
+<img src="../images/Picture17.png">
 
 ---
 
 
 # Vraag 11: Is er een link tussen prijs en land? Zijn sommige landen opvallend duurder (en kan dit niet verklaard worden door de extra afstand)?
 
-<img src="./images/Picture18.png">
+<img src="../images/Picture18.png">
 
-<img src="./images/Picture19.png">
+<img src="../images/Picture19.png">
 
 ---
 
 
 # Vraag 12: Hoeveel dagen voor vertrek is een vlucht volgeboekt? Zijn er bestemmingen waarbij de vluchten bijna volgeboekt zijn?
 
-<img src="./images/Picture20.png">
+<img src="../images/Picture20.png">
 
 ```
 Om deze vraag te beantwoorden, hebben we eerst alle rijen uit de tabel ‘factFlights’ geselecteerd waarbij er geen beschikbare plaatsen meer waren. Vervolgens hebben we deze rijen gegroepeerd op vluchtnummer en hebben we alleen de eerste datum genomen die voorkomt.
@@ -290,7 +290,7 @@ plt.show()
 
 # Vraag 13: Hoeveel procent van de vluchten zijn volgeboekt? / Hoeveel plaatsen zijn er nog vrij 5 dagen voor vertrek?
 
-<img src="./images/Picture21.png">
+<img src="../images/Picture21.png">
 
 ```
 Het doel van deze grafiek is om de bestemming te identificeren waar je de meeste kans hebt om last-minute een ticket te bemachtigen.
@@ -323,7 +323,7 @@ plt.show()
 
 # Vraag 14a: Plot het verband tussen de prijs en het aantal dagen voor vertrek voor Ryanair voor de afgelopen maand.
 
-<img src="./images/Picture22.png">
+<img src="../images/Picture22.png">
 
 ```
 Het doel van deze grafiek is om het optimale moment voor het boeken van een Ryanair-vlucht te bepalen 30 dagen voor vertrek. 
@@ -363,7 +363,7 @@ plt.show()
 
 # Vraag 14b:  Maak gebruik van regressie om de prijzen te voorspellen voor de volgende maand.
 
-<img src="./images/Picture23.png">
+<img src="../images/Picture23.png">
 
 ```
 Het doel van deze grafiek is om een voorspelling te maken van de prijs per aantal dagen voor vertrek voor de volgende maand. 
@@ -397,7 +397,7 @@ dtypes: float64(1), int32(1), int64(5), object(1)
 ```
 Zoals je hierboven kan zien is city van het Dtype 'object'. Dit moeten we omzetten zodat we LinearRegression kunnen gebruiken. Dit doen we met behulp van OneHotEncoding. Hieronder het resultaat van de OneHotEncoding:
 ```
-<img src="./images/onehotencoding.png">
+<img src="../images/onehotencoding.png">
 
 ```
 Daarna splitsen we de data op in X en y, en nog eens verder in X_train, X_test, y_train en y_test en testen we het model. Hieronder vind je de resultaten van het model.
@@ -418,7 +418,7 @@ Om de prijzen van volgende maand te voorspellen doen we hetzelfde als hierboven 
 
 **df_next_month_prices:**
 
-<img src="./images/next_month_prices_df.png">
+<img src="../images/next_month_prices_df.png">
 
 ## Code:
 
@@ -535,26 +535,26 @@ plt.show()
 # Vraag 15: In PowerBI een kaart maken met de mogelijke bestemmingen als de prijs in een bepaalde range moet liggen + op een bepaald moment?
 
 ### Algemeen:
-<img src="./images/Picture24.png">
+<img src="../images/Picture24.png">
 
 ### Met slicers (tweede week paasvakantie tussen 19.99 en 60 euro):
-<img src="./images/Picture25.png">
+<img src="../images/Picture25.png">
 
 ---
 
 
 # Vraag 16: Welke vliegtuigmaatschappij biedt de meeste directe vluchten aan naar een specifieke bestemming?
 
-<img src="./images/Picture26.png">
+<img src="../images/Picture26.png">
 
 ---
 
 
 # Vraag 17: Welke luchthavens hebben de hoogste gemiddelde ticketprijzen voor specifieke bestemmingen?
 
-<img src="./images/Picture27.png">
+<img src="../images/Picture27.png">
 
-<img src="./images/Picture28.png">
+<img src="../images/Picture28.png">
 
 ---
 
@@ -562,10 +562,10 @@ plt.show()
 # Vraag 18: Welke bestemmingen hebben de grootste vraag naar vluchten en zijn daarom het meest gevoelig voor prijsschommelingen?
 
 ### Alicante:
-<img src="./images/Picture29.png">
+<img src="../images/Picture29.png">
 
 ### Palermo:
-<img src="./images/Picture30.png">
+<img src="../images/Picture30.png">
 
 ---
 
@@ -573,19 +573,19 @@ plt.show()
 # Vraag 19: Welke dag van de week zijn de prijzen, per bestemming, gemiddeld het laagst?
 
 ### Algemeen:
-<img src="./images/Picture31.png">
+<img src="../images/Picture31.png">
 
 ### Napels:
-<img src="./images/Picture32.png">
+<img src="../images/Picture32.png">
 
 ### Tenerife:
-<img src="./images/Picture33.png">
+<img src="../images/Picture33.png">
 
 ---
 
 
 # Vraag 20: Wat is het goedkoopste vertrekuur voor vluchten?
 
-<img src="./images/Picture34.png">
+<img src="../images/Picture34.png">
 
 ---
