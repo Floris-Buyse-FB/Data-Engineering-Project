@@ -53,7 +53,7 @@ def driver_init(dest, driver, dag=1, maand=3):
     # URL's
     url = f"https://www.brusselsairlines.com/lhg/be/nl/o-d/cy-cy/brussel-{dest}"
 
-<<<<<<<< HEAD:webscraping_scripts/BruAir2_Scrape.py
+
     with ApiGateway(url) as g:
         session = requests.Session()
         session.mount(url, g)
@@ -61,8 +61,7 @@ def driver_init(dest, driver, dag=1, maand=3):
         response = session.get(url=url, headers=HEADERS)
         print(response.status_code)
 
-========
->>>>>>>> 4c0add5 (BruAir aanpassingen):webscraping_scripts/BruAir_Scrape2.py
+
     # driver.get("https://www.google.com")
     time.sleep(2)
     driver.get(url)
